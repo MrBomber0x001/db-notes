@@ -1,6 +1,6 @@
 ## Courses
 #### Data Analyst with SQL Server 
-- [-] [Introduction to SQL Server](https://app.datacamp.com/learn/courses/introduction-to-sql-server)
+- [+] [Introduction to SQL Server](https://app.datacamp.com/learn/courses/introduction-to-sql-server)
 - [-] [Introduction to Relational Databases in SQL](https://app.datacamp.com/learn/courses/introduction-to-relational-databases-in-sql)
 - [-] [Intermediate SQL Server
 ](https://app.datacamp.com/learn/courses/intermediate-sql-server)
