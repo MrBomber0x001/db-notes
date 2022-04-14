@@ -215,7 +215,7 @@ GROUP BY sex;
 
 **NOTES** 
 
-- Commonly, GROUP BY is used with aggregate functions like COUNT() or MAX(). Note that GROUP BY always goes after the FROM clause and before WHERE!.
+- Commonly, GROUP BY is used with aggregate functions like COUNT() or MAX(). Note that GROUP BY always goes after the FROM clause.
 
 - SQL will return an error if you try to SELECT a field that is not in your GROUP BY clause without using it to calculate some kind of value about the entire group
 
@@ -236,3 +236,47 @@ select imdb_score, count(*) from films group by imdb_score
 |5.7|	117|
 |8.7	|11|
 |9|	2|
+
+-- Get the release year and lowest gross earnings per release year.
+
+```sql
+select release_year, min(gross) from films 
+group by release_year;
+```
+
+-- Get the release year, country, and highest budget spent making a film for each year, for each country. Sort your results by release year and country.
+
+```sql
+select release_year, country, max(budget) from films group by release_year, country order by release_year, country
+```
+
+
+- `Having` 
+Aggregate functions can't be used on `WHERE clause` 
+If we need to filter based on aggreagete funtion result, we need to use `HAVING` 
+
+
+
+-- write a query that returns the average budget and average gross earnings for films in each year after 1990, if the average budget is greater than $60 million.
+
+```sql
+SELECT release_year, AVG(budget) AS avg_budget, AVG(gross) AS avg_gross
+FROM films
+WHERE release_year > 1990
+GROUP BY release_year
+HAVING AVG(budget) > 60000000
+ORDER BY avg_gross DESC;
+```
+
+
+-- Get the country, average budget, and average gross take of countries that have made more than 10 films. Order the result by country name, and limit the number of results displayed to 5. You should alias the averages as avg_budget and avg_gross respectively.
+
+
+```sql
+select country, avg(budget) as avg_budget, avg(gross) as avg_gross, country
+from films
+group by country
+having count(title) > 10
+order by country
+limit 5
+```
