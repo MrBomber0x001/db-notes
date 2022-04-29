@@ -1,6 +1,6 @@
 # SQL Tracks
 
-<img align="right" width="90" height="90" src="https://github.com/MrBomber0x001/db-notes/tree/main/Datacamp/logos/datacamp.jpg">
+<img align="right" width="90" height="90" src="https://github.com/MrBomber0x001/db-notes/blob/main/Datacamp/logos/datacamp.jpg">
 Keep tracking your progress here.
 
 #### Data Analyst with SQL Server
