@@ -228,9 +228,6 @@ Keep tracking your progress here.
 
 # General DB Knowledge
 
-<br>
-<br><br>
-
 ## SQL
 
 <table>
