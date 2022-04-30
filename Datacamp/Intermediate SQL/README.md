@@ -2,15 +2,15 @@
 
 1. Summarizing Data.
 2. Date and Math functions
-3. Processing Data with T-SQL
-4. Windwo functions.
-
+3. Processing Data with T-SQL (Loops, Derived Tables and CTE)
+4. Windowing and it's common functions
 
 ## Chapter 1: Summarizing Data
 
 We summarize date using Aggregate functions.
 
 - Aggregate functions
+
 #### Some exercises
 
 ```sql
@@ -34,15 +34,14 @@ GROUP BY Shape
 having min(DurationSeconds) > 1
 ```
 
-
 - Dealing with Missing Data
 
 Blank is not NULL
+
 - A blank is not the same as a NULL value
 - May show up in columns containing texts
 - An Empty string '' can be used to find blank values
 - The best way is look for a column where the length or LEN > 0
-
 
 ```sql
 SELECT country,GDP Year
@@ -57,7 +56,7 @@ WHERE LEN(GDP) > 0
 SELECT GDP, Country
 ISNULL(Country, 'Unknown') As NewCountry
 FROM EconomicIndicators
-``` 
+```
 
 we can replace with existing column
 
@@ -75,7 +74,6 @@ SELECT TradeGDPPercent, ImportantGoodPercent
 COALESCE(TradeGDPPercent, ImportantGoodPercent, 'N/A') As NewCountry
 FROM EconomicIndicators
 ```
-
 
 ##### Binning Date with Case
 
@@ -146,7 +144,6 @@ FROM Shipments
 GROUP BY MixDesc
 ```
 
-
 - Dates
 
 `DATEPART` is used to determine what part of the date you want to Calculate, some of the common abbreviation are:
@@ -161,7 +158,6 @@ GROUP BY MixDesc
 
 what is the date is 30 days from Jun 12, 2020? and also 30 days before
 
-
 ```sql
 SELECT DATEADD(DD, 30, '2020-06-21') as after_days, DATEADD(DD, -30, '2020-06-21') as before_days;
 ```
@@ -173,7 +169,6 @@ SELECT DATEADD(DD, 30, '2020-06-21') as after_days, DATEADD(DD, -30, '2020-06-21
 SELECT DATEDIFF(DD, '2020-05-22', '2020-06-21') as diff1
  DATEDIFF(DD, '2020-07-21', '2020-06-21')as diff1
 ```
-
 
 ### Practical Example
 
@@ -190,7 +185,6 @@ FROM Shipments
 SELECT OrderDate, DATEADD(DD, 5, ShipDate) As DeliveryDate FROM Shipments
 ```
 
-
 - Rounding And Truncating numbers
 
 `ROUND(number, length, [, function])`
@@ -202,7 +196,6 @@ if(length < 0)
 else
     roundRightNumber()
 ```
-
 
 ```sql
 -- Round Cost to the nearest dollar
@@ -237,7 +230,6 @@ SELECT WeightValue,
 FROM Shipments
 ```
 
-
 ## Chapter 3: Processing Data
 
 - While Loops
@@ -270,8 +262,6 @@ JOIN(SELECT AVG(Age) As AverageAge FROM Kidney b)
 On a.Age = b.AverageAge
 ```
 
-
-
 ```sql
 SELECT a.RecordId, a.Age, a.BloodGlucoseRandom, 
 -- Select maximum glucose value (use colname from derived table)    
@@ -292,7 +282,6 @@ ON a.BloodPressure = b.MaxBloodPressure
 AND a.Age = b.Age
 ```
 
-
 - CTES (Common Table Expression)
 are another type of derived table, they are little different as they can be used multiple times in a query and are defined like a table. [Defined before you use it]
 
@@ -304,6 +293,7 @@ AS
     FROM TableName
 )
 ```
+
 the columns names need to maatch coluns in the query
 
 #### Some Exercises
@@ -353,7 +343,6 @@ Join BloodPressure b
 on a.BloodPressure = b.MaxBloodPressure
 ```
 
-
 ## Chapter 4: Window functions
 
 Window functions provides the ability to create and analyze groups of data.
@@ -364,14 +353,14 @@ Data here are processed as a group, allowing each group to be evaluated seperate
 
 ![](./imgs/window.PNG)
 
-here the data are seperated ono groups based on `SalesYear`
+here the data are seperated onto groups based on `SalesYear`
 
 using windowing function, you can create a query to return values by year, without knowing the value of year is!
 
 - Window function is create by OVER() clause
 - PARTITION BY creates the frame.
 - if you do not include the PARTITION BY the frame is entire table
-- to arragne the results, use ORDER BY.
+- to arrange the results, use ORDER BY.
 - Allows aggregations to be created at the same time as the window.
 
 ```sql
@@ -386,7 +375,6 @@ SELECT SalesPerson, SalesYear, CurrentQuota,
 FROM SalesGoal
 ```
 
-
 - Write a T-SQL query that returns the sum of OrderPrice by creating partitions for each TerritoryName
 
 ```sql
@@ -398,12 +386,13 @@ SELECT OrderID, TerritoryName,
 FROM Orders
 ```
 
-|OrderID|	TerritoryName|	TotalPrice|
+|OrderID| TerritoryName| TotalPrice|
 |--|--|--|
-|43706|	Australia	|1469|
-|43722	|Australia	|1469|
+|43706| Australia |1469|
+|43722 |Australia |1469|
 
 --  calculate the number of orders in each territory.
+
 ```sql
 SELECT OrderID, TerritoryName,
        COUNT(TerritoryName)
@@ -411,7 +400,7 @@ SELECT OrderID, TerritoryName,
 FROM Orders
 ```
 
-|OrderID|	TerritoryName|	TotalOrders|
+|OrderID| TerritoryName| TotalOrders|
 |--|--|--|
-|43706|	Australia	|13|
-|43722	|Australia	|16|
+|43706| Australia |13|
+|43722 |Australia |16|
