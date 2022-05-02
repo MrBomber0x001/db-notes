@@ -27,8 +27,6 @@ Keep tracking your progress here.
 
 [+] [Introduction to SQL](https://app.datacamp.com/learn/courses/introduction-to-sql)
 
-<br>
-<br><br>
 
 ## SQL Server
 
@@ -227,9 +225,6 @@ Keep tracking your progress here.
 </table>
 
 # General DB Knowledge
-
-<br>
-<br><br>
 
 ## SQL
 
