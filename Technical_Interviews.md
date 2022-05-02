@@ -11,6 +11,147 @@ So I've divided it by topics from various problem-solving websites (leetcode, ha
 You should have the following prerequisites
 (SELECT, ORDER BY, WHERE, GROUP BY, Regex, CASE WHEN, IF, WHILE, JOINs)
 
+
+<table>
+  <thead>
+    <tr>
+      <th>Problem</th>
+      <th>Done</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+     <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+    <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+     <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+    <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+     <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+    <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+     <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+    <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+     <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+    <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+     <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+    <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+     <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+    <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+     <tr>
+      <td>
+        <a href="https://www.hackerrank.com/challenges/revising-the-select-query?isFullScreen=true">Revisiting SQL Query</a>
+      </td>
+      <td>
+          - [x]
+      </td>
+     </tr>
+  </tbody>
+  
+ </table>
+  
 ### SELECTing
 
 Here you'll learn how to use `SELECT` Statements with `ORDER BY` and `WHERE` etc
