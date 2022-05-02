@@ -17,9 +17,3 @@ The repo contains the following:
     - Database System Concepts
     - Architecture of Database Systems
     - Internals of Databases.
-
-## Topics
-
-- Introduction to SQL
-
-## Resources
