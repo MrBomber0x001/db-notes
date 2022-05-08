@@ -102,7 +102,7 @@ FROM EconomicIndicators
 we can use `CASE` to create `groups` which are often called `bins`
 
 ```sql
-SELECT Country, LifeExp
+SELECT Country, LifeExp,
 CASE 
     WHEN LifeExp < 30 THEN 1
     WHEN LifeExp > 29 AND LifeExp < 40 THEN 2
