@@ -192,18 +192,18 @@ Here you'll learn how to use `SELECT` Statements with `ORDER BY` and `WHERE` etc
       </td>
      </tr>
   </tbody>
+  
+ </table>
 
-</table>
-
-https://leetcode.com/problems/big-countries/
-https://leetcode.com/problems/recyclable-and-low-fat-products/
-https://leetcode.com/problems/find-customer-referee/
-https://leetcode.com/problems/customers-who-never-order/
-
-https://leetcode.com/problems/calculate-special-bonus/
-https://leetcode.com/problems/swap-salary/
-https://leetcode.com/problems/delete-duplicate-emails/
+<https://leetcode.com/problems/big-countries/>
+<https://leetcode.com/problems/recyclable-and-low-fat-products/>
+<https://leetcode.com/problems/find-customer-referee/>
+<https://leetcode.com/problems/customers-who-never-order/>
 
 ### CASE WHEN
+
+<https://leetcode.com/problems/calculate-special-bonus/>
+<https://leetcode.com/problems/swap-salary/>
+<https://leetcode.com/problems/delete-duplicate-emails/>
 
 ### JOINS
