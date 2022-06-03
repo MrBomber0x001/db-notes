@@ -17,3 +17,6 @@ The repo contains the following:
     - Database System Concepts
     - Architecture of Database Systems
     - Internals of Databases.
+
+#### note
+This repo is under construction, so check it regularly as I am updating it on regular basis.
