@@ -18,5 +18,10 @@ The repo contains the following:
     - Architecture of Database Systems
     - Internals of Databases.
 
+
+### Resources
+- [brentozar training](https://training.brentozar.com/courses) for advanced topics.
+- High Performance MySQL: Optimization, Backups, and Replication [Book].
+- [Fundmentals of Database Engineering](https://www.udemy.com/course/database-engines-crash-course/)
 #### note
 This repo is under construction, so check it regularly as I am updating it on regular basis.
