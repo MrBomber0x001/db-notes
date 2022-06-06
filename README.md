@@ -23,5 +23,9 @@ The repo contains the following:
 - [brentozar training](https://training.brentozar.com/courses) for advanced topics.
 - High Performance MySQL: Optimization, Backups, and Replication [Book].
 - [Fundmentals of Database Engineering](https://www.udemy.com/course/database-engines-crash-course/)
+
+
+## My Articles:
+I am writing on Hashnode and Medium.
 #### note
 This repo is under construction, so check it regularly as I am updating it on regular basis.
