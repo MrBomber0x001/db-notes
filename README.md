@@ -9,19 +9,23 @@ The repo contains the following:
 2. Hackerrank solutions I've make.
 
 3. Notes from Carnige mellon Database courses:
-    1. Introduction to Database Concepts, Fall 2018
-    2. Advanced Databases Fall 2018
+    - [ ] Introduction to Database Concepts, Fall 2018
+    - [ ] Advanced Databases Fall 2018
 4. Notes from the Books I've read:
-    - Concise Guide to Databases
-    - T-SQL fundementals
-    - Database System Concepts
-    - Architecture of Database Systems
-    - Internals of Databases.
+    - [ ] Concise Guide to Databases
+    - [ ] T-SQL fundementals
+    - [ ] Database System Concepts
+    - [ ] Architecture of Database Systems
+    - [ ] Internals of Databases.
 
 
 ### Resources
 - [brentozar training](https://training.brentozar.com/courses) for advanced topics.
 - High Performance MySQL: Optimization, Backups, and Replication [Book].
 - [Fundmentals of Database Engineering](https://www.udemy.com/course/database-engines-crash-course/)
+
+
+## My Articles:
+I am writing on Hashnode and Medium.
 #### note
 This repo is under construction, so check it regularly as I am updating it on regular basis.
