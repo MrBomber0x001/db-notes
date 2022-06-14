@@ -1,7 +1,8 @@
 # SQL Tracks
 
 <img align="right" width="90" height="90" src="https://github.com/MrBomber0x001/db-notes/blob/main/Datacamp/logos/datacamp.jpg">
-Keep tracking your progress here.
+
+You can keep tracking yoru progress here.
 
 #### Data Analyst with SQL Server
 
@@ -23,9 +24,18 @@ Keep tracking your progress here.
 - [ ] [Improving Query Performance in SQL Server
 ](https://app.datacamp.com/learn/courses/improving-query-performance-in-sql-server)
 
+
+### Finished Projects 
+- [ ] <a href="https://app.datacamp.com/learn/projects/754">Analyze International Debt Statistics</a>
+- [ ] <a href="https://app.datacamp.com/learn/projects/1413">When Was the Golden Age of Video Games?</a>
+- [ ] <a href="https://app.datacamp.com/learn/projects/1416">Analyzing NYC Public School Test Result Scores</a>
+- [ ] <a href="https://app.datacamp.com/learn/projects/1441">Analyzing American Baby Name Trends</a>
+- [ ] <a href="https://app.datacamp.com/learn/projects/1442">Optimizing Online Sports Retail Revenue</a>
+- [ ] <a href="https://app.datacamp.com/learn/projects/worlds_oldest_businesses">What and Where are the World's Oldest Businesses</a>
+
 #### Other Courses
 
-[+] [Introduction to SQL](https://app.datacamp.com/learn/courses/introduction-to-sql)
+[ ] [Introduction to SQL](https://app.datacamp.com/learn/courses/introduction-to-sql)
 
 
 ## SQL Server
