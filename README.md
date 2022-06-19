@@ -24,6 +24,7 @@ The repo contains the following:
 - High Performance MySQL: Optimization, Backups, and Replication [Book].
 - [Fundmentals of Database Engineering](https://www.udemy.com/course/database-engines-crash-course/)
 - <a href="https://www.red-gate.com/blog/database-development">Red Gate Blog</a>
+- <a href="https://www.youtube.com/c/ScalingPostgres/videos">Postgres Scaling - [Youtbube] </a>
 
 
 ## My Articles:
