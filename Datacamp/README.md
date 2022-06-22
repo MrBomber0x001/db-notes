@@ -6,9 +6,9 @@ You can keep tracking yoru progress here.
 
 #### Data Analyst with SQL Server
 
-- [ ] [Introduction to SQL Server](https://app.datacamp.com/learn/courses/introduction-to-sql-server)
-- [ ] [Introduction to Relational Databases in SQL](https://app.datacamp.com/learn/courses/introduction-to-relational-databases-in-sql)
-- [ ] [Intermediate SQL Server
+- [x] [Introduction to SQL Server](https://app.datacamp.com/learn/courses/introduction-to-sql-server)
+- [x] [Introduction to Relational Databases in SQL](https://app.datacamp.com/learn/courses/introduction-to-relational-databases-in-sql)
+- [x] [Intermediate SQL Server
 ](https://app.datacamp.com/learn/courses/intermediate-sql-server)
 
 - [ ] [Time Series Analysis in SQL Server
@@ -20,12 +20,12 @@ You can keep tracking yoru progress here.
 - [ ] [Transactions and Error Handling in SQL Server
 ](https://app.datacamp.com/learn/courses/transactions-and-error-handling-in-sql-server)
 - [ ] [Writing Functions and Stored Procedures in SQL Server](https://app.datacamp.com/learn/courses/writing-functions-and-stored-procedures-in-sql-server)
-- [ ] [Building and Optimizing Triggers in SQL Server](https://app.datacamp.com/learn/courses/building-and-optimizing-triggers-in-sql-server)
+- [x] [Building and Optimizing Triggers in SQL Server](https://app.datacamp.com/learn/courses/building-and-optimizing-triggers-in-sql-server)
 - [ ] [Improving Query Performance in SQL Server
 ](https://app.datacamp.com/learn/courses/improving-query-performance-in-sql-server)
 
+### Finished Projects
 
-### Finished Projects 
 - [ ] <a href="https://app.datacamp.com/learn/projects/754">Analyze International Debt Statistics</a>
 - [ ] <a href="https://app.datacamp.com/learn/projects/1413">When Was the Golden Age of Video Games?</a>
 - [ ] <a href="https://app.datacamp.com/learn/projects/1416">Analyzing NYC Public School Test Result Scores</a>
@@ -36,7 +36,6 @@ You can keep tracking yoru progress here.
 #### Other Courses
 
 [ ] [Introduction to SQL](https://app.datacamp.com/learn/courses/introduction-to-sql)
-
 
 ## SQL Server
 
