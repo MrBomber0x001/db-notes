@@ -1,224 +1,693 @@
+---
+layout: post
+title: How to Handle T-SQL Errors Properly [Extensive guide]
+subtitle: 
+cover-img: /assets/img/cover.jfif
+thumbnail-img: /assets/img/Inkedk0QFwX.jpg
+share-img: /assets/img/Inkedk0QFwX.jpg
+tags: [sql]
+---
+
+
+## Introduction
+
+![giphy.gif](<https://cdn.hashnode.com/res/hashnode/image/upload/v1656254959441/Hz9dG9JiL.gif>)
+
+As a Backend Software Engineer, you will be working with databases a lot on a regular basis, so you should get comfortable reading SQL errors to properly fix them, so it's an essential skill for you as a developer and troubleshooter as well. <br>
+
+Errors in T-SQL are of many types, based on the error you get, you can decide the optimal solution for it.
+So In this article, I will show you how to **read**, **handle** and even **customize** your errors.
+
+## Table of Contents
+
+1. Starting with error handling.
+2. Raising, throwing, and customizing your errors.
+3. Resources.
+
+## Error Handling
+
+let's begin with an example to demonstrate the concept of errors on SQL server
+Imagine you have a database consisting of Products, Buyers, Staff, and Orders
+and you have a unique constraint on the product table (on product_name)
+
 ```sql
-BEGIN TRY
-    INSERT INTO products   (product_name, stock, price)
-        values('duplicated values');
-    SELECT 'product inserted correctly!' as message
-End try
-BEGIN CATCH
-    SELECT 'An error occurred! you are in the catch block' as message
-END CATCH
---- we can use the print function instead of select statement
+CONSTRAINT unique_product_name UNIQUE (product_name);
 ```
 
-we could have nestin try..catch
+And you tried to insert a product with a name that already exits
+
+```sql
+INSERT INTO products (product_name, stock, price)
+    VALUES ('Trek Powerfly 5 - 2018', 10, 3499.99);
+```
+
+🤔 what do you think you will get? <br>
+Of course an error
+
+```
+Violation of UNIQUE KEY constraint 'unique_product_name'.
+Cannot insert duplicate key in object 'dbo.products'.
+The duplicate key value is (Trek Powerfly 5 - 2018).
+```
+
+we can handle this kind of Error using the `Try catch` block. <br>
+The syntax of try-catch on SQL is nearly similar to the ones on programming languages,
+you begin with try and end with catch, you see it's that simple 😄. <br>
+
+The General syntax
+
+```sql
+BEGIN TRY
+    { sql_statement | statement_block }
+END TRY
+BEGIN CATCH
+    [ { sql_statement | statement_block } ]
+END CATCH
+[ ; ]
+```
+
+In case of your query inside Try throw an error, then you place your error handling statements with the catch block. <br>
+If there is no error, the catch block is skipped
+
+**An example of a statement that fails**
+
+```sql
+BEGIN TRY
+    INSERT INTO products (product_name, stock, price)
+        VALUES ('Trek Powerfly 5 - 2018', 10, 3499.99);
+    SELECT 'Product inserted correctly!' AS message;
+END TRY
+BEGIN CATCH
+    SELECT 'An error occurred! You are in the CATCH block' AS message;
+END CATCH
+```
+
+| message |
+|-----------------------------------------------|
+| An error occurred! You are in the CATCH block |
+
+**An example of successful Insertion**
+
+```sql
+
+BEGIN TRY
+    INSERT INTO products (product_name, stock, price)
+    VALUES ('Super new Trek Powerfly', 5, 1499.99);
+    SELECT 'Product inserted correctly!' AS message;
+END TRY
+BEGIN CATCH
+    SELECT 'An error occurred! You are in the CATCH block' AS message;
+END CATCH
+```
+
+| message |
+|-----------------------------|
+| Product inserted correctly! |
+
+### Nested try..catch
+
+A try block or a catch block can `nest` another try-catch block. <br>
+**an example of nested try-catch**
+
+```sql
+BEGIN try
+    INSERT INTO products (product_name, stock, price)
+    VALUES ('Trek Powerfly 5 - 2018', 10, 3499.99);
+    SELECT 'Product inserted correctly!' AS message
+END TRY
+
+BEGIN catch
+    SELECT 'An error occurred inserting the product!
+            You are in the first CATCH block' AS message;
+    BEGIN TRY
+        INSERT INTO myErrors
+            VALUES ('ERROR!');
+        SELECT 'Error inserted correctly!' AS message;
+    END TRY
+    BEGIN CATCH
+        SELECT 'An error occurred inserting the error!
+        You are in the second CATCH block' AS message;
+    END CATCH
+END CATCH
+```
+
+| message |
+|--|
+| An error occurred inserting the product! You are in the first CATCH block |
+
+| message |
+|---|
+| An error occurred inserting the error! You are in the second CATCH block |
+
+#### Exercise
+
+You have a stock attribute on `products` table and you can't have negative values on this attribute.
+
+```sql
+-- Set up the TRY block
+BEGIN TRY
+    -- Add the constraint
+    ALTER TABLE products
+        ADD CONSTRAINT CHK_Stock CHECK (stock >= 0);
+END TRY
+-- Setcatc up the CATCH block
+BEGIN CATCH
+    SELECT 'An error occurred!';
+END CATCH
+```
+
+| query result |
+| --- |
+| An error occurred!|
 
 ```sql
 -- Set up the first TRY block
-begin try
-	INSERT INTO buyers (first_name, last_name, email, phone)
-		VALUES ('Peter', 'Thompson', 'peterthomson@mail.com', '555000100');
-end try
+BEGIN TRY
+    INSERT INTO buyers (first_name, last_name, email, phone)
+        VALUES ('Peter', 'Thompson', 'peterthomson@mail.com', '555000100');
+END TRY
 -- Set up the first CATCH block
-begin CATCH
-	SELECT 'An error occurred inserting the buyer! You are in the first CATCH block';
-    -- Set up the nested TRY block
-    begin try
-    	INSERT INTO errors
-        	VALUES ('Error inserting a buyer');
-        SELECT 'Error inserted correctly!';
-	end try
-    -- Set up the nested CATCH block
-    begin CATCH
-    	SELECT 'An error occurred inserting the error! You are in the nested CATCH block';
-    end CATCH
-end CATCH
-```
-
-```sql
--- Set up the TRY block
-BEGIN try
-	-- Add the constraint
-	ALTER TABLE products
-		ADD CONSTRAINT CHK_Stock CHECK (stock >= 0);
-ENd TRY
--- Set up the CATCH block
 BEGIN CATCH
-	SELECT 'An error occurred!';
-END CATcH
+    SELECT 'An error occurred inserting the buyer! You are in the first CATCH block';
+    -- Set up the nested TRY block
+    BEGIN TRY
+        INSERT INTO errors
+            VALUES ('Error inserting a buyer');
+        SELECT 'Error inserted correctly!';
+    END  TRY
+    -- Set up the nested CATCH block
+    BEGIN CATCH
+        SELECT 'An error occurred inserting the error! You are in the nested CATCH block';
+    END CATCH
+END CATCH
+
 ```
 
+### Error Anatomy and uncatchable error
+
+📓**note**: </br>
+> Not all errors are catchable
+
 ```sql
--- Set up the TRY block
-begin try
-	SELECT 'Total: ' + SUM(price * quantity) AS total
-	FROM orders
-end try
--- Set up the CATCH block
-begin catch
-	-- Show error information.
-	SELECT  error_number() AS number,
-        	error_severity() AS severity_level,
-        	error_state() AS state,
-        	error_line() AS line,
-        	error_message() AS message;
+INSERT INTO products (product_name, stock, price)
+VALUES ('Trek Powerfly 5 - 2018', 10, 3499.99);
+```
+
+```
+Msg 2627, Level 14, State 1, Line 1
+Violation of UNIQUE KEY constraint 'unique_name'.
+Cannot insert duplicate key in object 'dbo.products'.
+The duplicate key value is (Trek Powerfly 5 - 2018).
+```
+
+Let's break down the error message, to compose a useful information and know exactly how to handle error based on it's Anatomy <br>
+
+* The first line is `error number` -> sql errors  from `1 to 49999`
+
+You can also create your own starting from `50001`
+
+`select * from sys.message` -> to know the complete log of error numbers
+
+| message_id | language_id | severity | ... | text |
+| --- | --- | --- | --- | --- |
+| 2627 | 1033| 14 | .. | Violation of %ls constraint '%.*ls'. Cannot insert duplcate... |
+
+* The second value is `severity level`
+
+* from `0 - 10`: informational messages (warnings)
+* from `11 - 16`: errors that can be corrected by the user (constraint violation, etc.)
+* from `17 - 26`: other errors (software problems, fatal errors)
+
+you can see the whole list through the docuemntation
+
+* the third value is the state: it gives you more information about the error
+1: if SQL server display an error
+0-255: own errors -> to raise your own error
+
+* The fourth value is `Line`  -> give you the line number.
+
+Finally, if the error happens within a stored procedure` or a `trigger`, you will receive extra data giving you the name of the stored procedure or the name of the trigger
+
+### Uncatchable Errors
+
+the try cath we've learned can't catch every kind of error.
+
+* Severity lower than 11 (Uncatchable)
+* Severity 11 -> 19 (catchable)
+* Compilation errors: objects and columns that don't exist
+
+the severity of 20 or higher that stopped the connection will not be caught but if it didn't cut the connection, it will be caught
+
+compilation error: object and column that doesn't exist
+
+**An example**
+
+```sql
+BEGIN TRY
+    select non-existent_column from products;
+END TRy
+BEGIN CATCH
+    select 'you are in the CATCH Block' as message;
 end catch
 ```
+
+notice the output?
+
+```
+Msg 207, Level 16, State 1, Line 2
+Invalid column name 'non_existent_column'.
+```
+
+It doesn't give you the actual error which is `you are in the CATCH Block` As this is a compilation error, the `CATCH` block can
+t handle the error
+
+### Giving information about the error
+
+```
+Msg 2627, Level 14, State 1, Line 1
+Violation of UNIQUE KEY constraint 'unique_name'.
+Cannot insert duplicate key in object 'dbo.products'.
+The duplicate key value is (Trek Powerfly 5 - 2018).
+this is the original error
+```
+
+and this is the error returned from the catch block
 
 ```sql
 BEGIN TRY
     INSERT INTO products (product_name, stock, price)
-    VALUES	('Trek Powerfly 5 - 2018', 2, 3499.99),
-    		('New Power K- 2018', 3, 1999.99)
+    VALUES ('Trek Powerfly 5 - 2018', 10, 3499.99);
+    SELECT 'Product inserted correctly!' AS message;
 END TRY
--- Set up the outer CATCH block
-begin catch
-	SELECT 'An error occurred inserting the product!';
-    -- Set up the inner TRY block
-    begin try
-    	-- Insert the error
-    	INSERT INTO erorrs
-        	VALUES ('Error inserting a product');
-    end try
-    -- Set up the inner CATCH block
-    begin catch
-    	-- Show number and message error
-    	SELECT
-        	error_line() AS line,
-			error_message() AS message;
-    END catch
-end catch
+BEGIN CATCH
+    SELECT 'An error occurred! You are in the CATCH block' AS message;
+END CATCH
 ```
 
+| message |
+|-----------------------------------------------|
+| An error occurred! You are in the CATCH block |
+
+sometimes the default error the query throws is very useful, and by overriding it using CATCH with an error statement we lose the default, however, can still retrieve it using
+
+### Error functions
+
+`ERROR_NUMBER()` returns the number of the error.
+`ERROR_SEVERITY()` returns te error severity (11-19)
+`ERROR_STATE()`  returns the state of the error
+`ERROR_LINE()` returns the number of the line error
+`ERROR_PROCEDURE()` returns the name of the stored proc/trigger, Null if there is no stored pro/trig
+`Error_message()`
+
+**An Example**
+
 ```sql
-if not exits(select * from staffs where staff_id = 16)
-    raiserror('No staff member with such id', 16, 1)
-    --or
-    raiserror('No %s with id %d.', 16, 1, 'staff memeber', 16);
+BEGIN TRY
+    INSERT INTO products (product_name, stock, price)
+        VALUES ('Trek Powerfly 5 - 2018', 10, 3499.99);
+END TRY
+BEGIN CATCH
+    SELECT
+    ERROR_NUMBER() AS Error_number,
+    ERROR_SEVERITY() AS Error_severity,
+    ERROR_STATE() AS Error_state,
+    ERROR_PROCEDURE() AS Error_procedure,
+    ERROR_LINE() AS Error_line,
+    ERROR_MESSAGE() AS Error_message;
+END CATCH
+```
+
+| Error_number| Error_severity| Error_state| Error_procedure| Error_line| Error_message|
+|-------------|---------------|------------|----------------|-----------|--------------|
+| 2627 | 14 | 1 | NULL | 2 | Violation of UNIQUE KEY constraint 'unique_name'... |
+
+⛔**Warning**: <br>
+> We can't use error functions outside the catch block
+
+```sql
+SELECT
+ERROR_NUMBER() AS Error_number,
+ERROR_SEVERITY() AS Error_severity,
+ERROR_STATE() AS Error_state,
+ERROR_PROCEDURE() AS Error_procedure,
+ERROR_LINE() AS Error_line,
+ERROR_MESSAGE() AS Error_message;
+```
+
+you will get `nulls`
+
+we can use it inside nested try and catch,
+But in this case, you will get the last error that occurred
+
+```sql
+BEGIN TRY
+    INSERT INTO products (product_name, stock, price)
+    VALUES ('Trek Powerfly 5 - 2018', 10, 3499.99);
+END TRY
+BEGIN CATCH
+    BEGIN TRY
+    INSERT INTO myErrors
+        VALUES ('ERROR!')
+END TRY
+BEGIN CATCH
+    SELECT 'Outer CATCH block' AS 'Error_from',
+        ERROR_NUMBER() AS Error_number,
+        ERROR_MESSAGE() AS Error_message;
+    END CATCH
+END CATCH
 ```
 
 ```sql
 BEGIN TRY
-	-- Change the value
-    DECLARE @product_id INT = 50;
-    IF NOT EXISTS (SELECT * FROM products WHERE product_id = @product_id)
-        RAISERROR('No product with id %d.', 11, 1, @product_id);
-    ELSE
-        SELECT * FROM products WHERE product_id = @product_id;
+    INSERT INTO products (product_name, stock, price) 
+    VALUES  ('Trek Powerfly 5 - 2018', 2, 3499.99),         
+            ('New Power K- 2018', 3, 1999.99)       
 END TRY
+-- Set up the outer CATCH block
 BEGIN CATCH
-	SELECT ERROR_MESSAGE();
+    SELECT 'An error occurred inserting the product!';
+    -- Set up the inner TRY block
+    BEGIN TRY
+        -- Insert the error
+        INSERT INTO errors 
+            VALUES ('Error inserting a product');
+    END Try    
+    -- Set up the inner CATCH block
+    BEGIN CATCH
+        -- Show number and message error
+        SELECT 
+            ERROR_LINE() AS line,      
+            ERROR_MESSAGE() AS message; 
+    END CATCH    
+END CATCH
+
+```
+
+## Raising, throwing and customizing your errors
+
+In this section, we will learn
+
+* How to raise errors.
+* Re-throw original errors.
+* Create your own defined errors.
+
+### Raise errors statements
+
+SQL Server provides two statements to raise errors
+
+* `RAISEERROR`
+* `THROW` (Microsoft recommend using it on new application)
+
+**RAISERROR syntax**
+
+```sql
+RAISEERROR ( {msg_str | msg_id | @local_variable_message}, severity, state, [ argument [, ...n]])
+[WITH option [,...n]]
+```
+
+* the first parameter can be a message string, a message-id, or a variable that contains the message string.
+* the second Parameter -> severity
+* the third -> state
+
+you can optionally add arguments, like strings or numbers
+
+if the message string has some parameter placeholders such as %s or %d, these arguments will replace them
+
+#### RAISERROR with message string
+
+```sql
+if not exits( select * from staff where staff_id = 15)
+    RAISERROR('No staff member with such id', 16, 1);
+```
+
+```
+Msg. 50000, Level 16, State 1, Line 3
+No staff member with such an id
+```
+
+If we don't specify an error number, the error number will always be `50000`
+
+Let's change the message text with `placeholders`
+
+```sql
+RAISERROR('No %s member with such id %d. ', 16, 1, 'staff member', 15);
+```
+
+```
+Msg. 50000, Level 16, State 1, Line 3
+No staff member with id 15
+```
+
+It's recommended to look at Microsoft documentation for more information
+
+#### RAISERROR with error number
+
+```sql
+RAISERROR(60000, 16, 1);
+```
+
+```
+Msg. 60000, Level 16, State 1, Line 1
+This is a test message
+```
+
+This error number comes from `sys.messages`
+
+**RIASERROR - Example with Try .. Catch**
+
+```sql
+BEGIN TRY
+    IF NOT EXISTS (SELECT * FROM staff WHERE staff_id = 15)
+        RAISERROR("No Staff member with such id.", 9, 1)
+END TRY
+BEGIN CATCH 
+    SELECT "You are in the CATCH block" AS message
 END CATCH
 ```
 
-THROW
-
-```sql
-begin try
-    select product_price / 0 from orders
-end TRY
-begin catch
-    throw;
-    select 'this line will not be exceuted' as message
-end catch;
+```
+No staff member with such id
+Msg. 50000, Level 9, State 1
 ```
 
-note about throw:
+As you might've guessed, errors below `11` are not catchable.
+
+if we changed the severity level from 9 to 11, the error will be caught by the catch
+
+| message |
+| --- |
+You are in the CATCH Block |
+
+#### Exercise
 
 ```sql
-begin TRY
-    select price / 0 from orders
-end TRY
-    select 'This line is exceuted'
-    throw;
-end catch;
+BEGIN TRY
+    -- Change the value
+    DECLARE @product_id INT = 5;
+    IF NOT EXISTS (SELECT *FROM products WHERE product_id = @product_id)
+        RAISERROR('No product with id %d.', 11, 1, @product_id);
+    ELSE
+SELECT* FROM products WHERE product_id = @product_id;
+END TRY
+BEGIN CATCH
+    SELECT ERROR_MESSAGE();
+END CATCH
 ```
 
-this query willhave a different behaviour that throw here will be column, because sql server will think that 'throw' is an alias for the select statement, to solve this behaviour, we should insert ';' after select
+### Throw statment
 
-stored procedure
+> Recommended by Microsoft over RAISERROR statement
+
+**General syntax**
+
+```sql
+THROW [error_number, message, state][;]
+```
+
+📓**note**:<br>
+unlike the RAISERROR statement, the THROW statement allows re-throwing an original error caught by a CATCH block
+
+#### Throw - Without parameters
+
+```sql
+BEGIN TRY
+    SELECT price/0 from orders;
+END TRY
+BEGIN CATCH
+    THROW;
+    SELECT 'This line is executed!' as message;
+END CATCH
+```
+
+The original error caused from the try block is dividing by 0, so the output mesasge is the thrown original error
+
+```
+(0 rows affected)
+Msg. 8134, Level 16, State 1, Line 2
+Divide by zero error encountered.
+```
+
+and `SELECT` statement inside catch has not been executed;
+
+be careful when writing THROW at the end, you should put a semi-colon before the line
+
+```sql
+BEGIN TRY
+    SELECT price / 0 from orders
+END TRY
+BEGIN CATCH 
+    SELECT 'This line is executed!'
+    THROW;
+END CATCH
+```
+
+| THROW |
+| --- |
+| This line is executed! |
+SQL Server thinks that the word THROW is an alias for the select statement
+
+#### Throw - with parameters
+
+This syntax can be included within a CATCH block or outside of it.
+
+```sql
+THROW 52000, 'This is an example, 1;
+```
+
+**An example**
+
+```sql
+BEGIN TRY
+    IF NOT EXISTS (SELECT * FROM staff FROM staff_id = 15)
+        THROW 51000, 'This is an example', 1;
+END TRY
+BEGIN CATCH
+    SELECT ERROR_MESSAGE() as message;
+END CATCH
+```
+
+But only statements with no parameter should be put on the `catch` block
+
+| message |
+| --- |
+| This is an example |
+
+**Another example**
 
 ```sql
 CREATE PROCEDURE insert_product
-  @product_name VARCHAR(50),
-  @stock INT,
-  @price DECIMAL
-
+    @product_name VARCHAR(5),
+    @stock INT,
+    @price DECIMAL
 AS
-
 BEGIN TRY
     INSERT INTO products (product_name, stock, price)
-        VALUES (@product_name, @stock, @price);
+        VALUES (@product_name, @stock, @price)
 END TRY
 BEGIN CATCH
     INSERT INTO errors VALUES ('Error inserting a product');
-    THROW;
+        THROW;
 END CATCH
+```
 
+```sql
 BEGIN TRY
-	-- Execute the stored procedure
-	EXEC insert_product
-    	-- Set the values for the parameters
-    	@product_name = 'Trek Conduit+',
-        @stock = 3,
-        @price = 499.99;
+    EXEC insert_product
+    @product_name = 'Trek Conduit+'
+    @stock = 3,
+    @price = 499.99
 END TRY
--- Set up the CATCH block
-Begin catch
-	-- Select the error message
-	SELECT error_message();
-end catch
-
+BEGIN CATCH
+    SELECT ERROR_MESSAGE();
+END CATCH
 ```
 
-customizing error messages using throw :
-we can't use %d or %s inside throw, but fortuantely, there are two ways to handle this situation;
-1-variable by concatenating strings
-2-formatMessage() function
+### customizing error messages in THROW statements
 
-1-using variable
+⚠️**Warning**: <br>
+
+throw statement doesn't allow the inclusion of parameters placeholders such as %d or %s but we have a hack around this by
+
+1. Variable by concatenating strings
+2. `FORMATEMESSAGE()` function
+
+#### Using a variable and the CONCAT function
 
 ```sql
-Declare @staff_id as int = 500;
-declare @my_messag NVARCHAR(500) = CONCAT('there is no staff memeber for id', @staff_id, '.try with another one');
+DECLARE @staff AS INT = 500;
+DECLARE @my_message NVARCHAR(500) = CONCAT('There is no staff member for id', @staff_id, '. Try with another one)
 
-if not exists (SELECT * FROM Staff where staff_id = @staff_id)
-    throw 50000, @my_message, 1;
+IF NOT EXISTS (SELECT * FROM staff WHERE staff_id = @staff_id)
+    THROW 50000, @my_message, 1;
 ```
 
-2-using formatMEssage() function
+```
+Msg. 50000, Level 16, State 1, Line 5
+There is no staff member for id 500. Try With another one.
+```
+
+#### Using FORMATEMESSAGE function
 
 ```sql
-Declare @staff_id as int = 500;
-declare @my_messag NVARCHAR(500) = FORMATMESSAGE('there is no staff memeber for id %d. %s', @staff_id, '.try with another one');
-
-if not exists (SELECT * FROM Staff where staff_id = @staff_id)
-    throw 50000, @my_message, 1;
-
+FORMATEMESSAGE( { ' msg_string' | msg_number }, [param_value [,...n]])
 ```
 
-using formatmessage() msg_number
+we can include wild cards
 
 ```sql
-exec sp_addmessage
-    @msgnum = 55000, @serverity = 16, ....
+DECLARE @staff AS INT = 500;
+DECLARE @my_message NVARCHAR(500) = FORMATEMESSAGE('There is no staff member for id %d. %s ', @staff_id, 'Try with another one');
 ```
+
+notice that the throw statement doesn't allow the specification of the severity, SQL server always sets it to 16
+
+#### FORMATEMESSAGE() with message number
+
+In SQL server we have a view `sys.messages` which contains messages with according `message_id`
 
 ```sql
-DECLARE @product_name AS NVARCHAR(50) = 'Trek CrossRip+ - 2018';
--- Set the number of sold bikes
-DECLARE @sold_bikes AS INT = 10;
-DECLARE @current_stock INT;
-
-SELECT @current_stock = stock FROM products WHERE product_name = @product_name;
-
-DECLARE @my_message NVARCHAR(500) =
-	-- Customize the error message
-	FORMATMESSAGE('There are not enough %s bikes. You have %d in stock.', @product_name, @current_stock);
-
-IF (@current_stock - @sold_bikes < 0)
-	-- Throw the error
-	THROW 50000, @my_message, 1;
+SELECT * FROM sys.messages
 ```
+
+You'll get a view
+
+| message_id | language_id | severity | is_event_logged | text |
+| --- | --- | --- | --- | --- |
+| 101 | 1033 | 15 | 0 | Query not allowed in Waitfor |
+| ... | ... | ... | ... | ... |
+
+we can *choose* any message_id or *add* a new message to this view to customize our errors. <br>
+To add a new message to `sys.messages`, we can execute the `sp_addmessage` stored procedure with the following parameters
+
+```sql
+sp_addmessage
+      msg_id, severity, msgtext,
+      [ language ],
+      [ with_log {'TRUE' | 'FALSE' } ],
+      [ replace]
+```
+
+* msg_id must be greater than 500000
+
+* language is optional, if you don't specify it, it would be the default language of the session.
+
+```sql
+EXEC sp_addmessage @msgnum = 55000, @severity = 16, @msgtext = 'There is no staff member for id %d. %s', @lang = 'us_english'
+```
+
+we can now use this new message_id on th `FORMATEMESSAGE()`
+
+```sql
+DECLARE @staff_id AS INT = 500;
+DECLARE @my_message NVARCHAR(500) = FORMATEMESSAGE(55000, @staff_id, 'Try with another one');
+
+IF NOT EXISTS (SELECT * FROM staff WHERE staff_id = @staff_id)
+        THROW 50000, @my_messaeg, 1
+```
+
+notice that the throw statement doesn't allow the specification of the severity, SQL server always sets it to 16
+
+**A Detailed Example**
 
 ```sql
 EXEC sp_addmessage @msgnum = 50002, @severity = 16, @msgtext = 'There are not enough %s bikes. You only have %d in stock.', @lang = N'us_english';
@@ -231,252 +700,12 @@ DECLARE @current_stock INT;
 SELECT @current_stock = stock FROM products WHERE product_name = @product_name;
 
 DECLARE @my_message NVARCHAR(500) =
-	FORMATMESSAGE(50002, @product_name, @current_stock);
+ FORMATMESSAGE(50002, @product_name, @current_stock);
 
 IF (@current_stock - @sold_bikes < 0)
-	THROW 50000, @my_message, 1;
+ THROW 50000, @my_message, 1;
 ```
 
-# Transcation
+## Resources
 
-example
-account 1 = $24, 400;
-account 5 = $35, 300;
-
-```sql
-begin TRY
-    begin transaction
-        update accounts set current_balance = current_balance - 100 where account_id = 1;
-        insert into transactions values(1, -100, getdate())
-
-        update accounts set current_balance = current_balance + 100 where account_id = 5;
-        insert INTO transactions values(5, 100, getDate());
-    Commit tran
-End TRY
-begin CATCH
-    select 'Rolling back transcation';
-    rollback transaction
-end catch
-```
-
-choosing when to commit or when to rollback
-
-```sql
-Begin transaction
-    update accounts set current_balance = current_balance + 100 where current_balance > 50000
-    If @@rowcount > 200
-        Begin
-            rollback tran;
-            select 'more accounts than expected. Rolling back';
-        EnD
-    ELSE
-        BEGIN
-            commit tran
-            select 'updated successfully'
-        End
-```
-
-@@TRANCOUNT and savepoints
-
-```sql
-BEGIN TRY
-	-- Begin the transaction
-	begin tran;
-    	-- Correct the mistake
-		UPDATE accounts SET current_balance = current_balance + 200
-			WHERE account_id = 10;
-    	-- Check if there is a transaction
-		IF @@trancount > 0
-    		-- Commit the transaction
-			commit tran;
-
-	SELECT * FROM accounts
-    	WHERE account_id = 10;
-END TRY
-BEGIN CATCH
-    SELECT 'Rolling back the transaction';
-    -- Check if there is a transaction
-    IF @@trancount > 0
-    	-- Rollback the transaction
-        rollback tran;
-END CATCH
-```
-
-USING SAVEPOINTS
-
-```SQL
-BEGIN TRAN;
-	-- Mark savepoint1
-	 SAVE TRAN savepoint1;
-	INSERT INTO customers VALUES ('Mark', 'Davis', 'markdavis@mail.com', '555909090');
-
-	-- Mark savepoint2
-    SAVE TRAN savepoint2;
-	INSERT INTO customers VALUES ('Zack', 'Roberts', 'zackroberts@mail.com', '555919191');
-
-	-- Rollback savepoint2
-	Rollback tran savepoint2    -- Rollback savepoint1
-rollback tran savepoint2
-	-- Mark savepoint3
-	save tran savepoint3
-	INSERT INTO customers VALUES ('Jeremy', 'Johnsson', 'jeremyjohnsson@mail.com', '555929292');
--- Commit the transaction
-COMMIT TRAN;
-```
-
-XACT_ABORT
-
-```sql
--- Use the appropriate setting
-SET XACT_ABORT off;
--- Begin the transaction
-Begin transaction;
-	UPDATE accounts set current_balance = current_balance - current_balance * 0.01 / 100
-		WHERE current_balance > 5000000;
-	IF @@ROWCOUNT <= 10
-    	-- Throw the error
-		Throw 55000, 'Not enough wealthy customers!', 1;
-	ELSE
-    	-- Commit the transaction
-		Commit transaction;
-```
-
-using XACT_ABORT and XACT_STATE()
-
-```sql
--- Use the appropriate setting
-SET XACT_ABORT on;
-BEGIN TRY
-	BEGIN TRAN;
-		INSERT INTO customers VALUES ('Mark', 'Davis', 'markdavis@mail.com', '555909090');
-		INSERT INTO customers VALUES ('Dylan', 'Smith', 'dylansmith@mail.com', '555888999');
-	COMMIT TRAN;
-END TRY
-BEGIN CATCH
-	-- Check if there is an open transaction
-	IF XACT_STATE() <> 0
-    	-- Rollback the transaction
-		Rollback tran;
-    -- Select the message of the error
-    SELECT error_message() AS Error_message;
-END CATCH
-```
-
-Transcation Isolation Levels
-
-```sql
--- Set the appropriate isolation level
-SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
-
-	-- Select first_name, last_name, email and phone
-	SELECT
-    	first_name,
-        last_name,
-        email,
-        phone
-    FROM customers;
-```
-
-```SQL
--- Set the appropriate isolation level
-SET transaction isolation LEVEL REPEATABLE READ
-
--- Begin a transaction
-bEGIN TRAN
-
-SELECT * FROM customers;
-
--- some mathematical operations, don't care about them...
-
-SELECT * FROM customers;
-
--- Commit the transaction
-COMMIT TRAN
-```
-
-- Serializable locks rows under some range
-  out of that range you can do concurrent transcations
-
-serilazable - query bases on index range
-
-```sql
-set transaction isolation level serializable
-
-Begin TRANSACTION
-	SELECT * FROM customers
-	Where customer_id BETWEEN 1 AND 3
-```
-
-serializable - Query not based on index range
-
-```sql
--- Transcation 1
-SET Transaction isolation level serializable
-	select * FROM customers
-
--- Transcation 2
-INSERT INTO customerts VALUEs(
-	100, 'Phantom', 'Ph', 'phantom@gmail.com', 22222
-)
-
---transcation 2 will have to wait until transaction 1 finished and commit the transcation
-	--transcation 1
-	select * from customers
-	--will give the same result as the previous example
-
---commiting from transcation 1
-commit TRAN
---transcation 2 will insert now successfully
-```
-
-```sql
--- Set the appropriate isolation level
-set transaction isolation level serializable
--- Begin a transaction
-begin transaction
--- Select customer_id between 1 and 10
-SELECT *
-FROM customers
-where customer_id between 1 AND 10;
-
--- After completing some mathematical operation, select customer_id between 1 and 10
-SELECT *
-FROM customers
-where customer_id between 1 AND 10;
-
--- Commit the transaction
-commit transaction
-```
-
-- Snapshot Example
-
-```sql
--- Transcation 1
-SET Transaction isolation level Snapshot
-
-Begin Tran
-	SELECT * from accounts
-
--- Transcation 2
-begin transaction
-	insert into accounts
-	values (11111111111111, 1, 25000)
-
-	update accounts set current_balance = 30000 where account_id = 1;
-
-	select * from accounts;
-Commit tran
--- tran 2 will get the same output as in the previous select statement
--- we don't see the data changed by tran 2 because these changes occurred after the start of transcation1. and with snapshot wwe an only see the committed changes that occured before the start of snapshot transaction
-```
-
-WITH (LOCK) applies to secific table, unlike READ UNCOMMITED which applies to the whole connection
-
-```sql
-SELECT *
-	-- Avoid being blocked
-	FROM transactions WITH (NOLOCK)
-WHERE account_id = 1
-```
-
-The End.
+* <a href="https://campus.datacamp.com/courses/transactions-and-error-handling-in-sql-server/raising-throwing-and-customizing-your-errors">Datacamp - Transaction and Error Handling</a>
