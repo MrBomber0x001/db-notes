@@ -301,7 +301,135 @@ SELECT Country
 FROM Earthquakes; -- Table with country codes
 ```
 
+### Alternative methods
+
+`EXISTS` filter the outer query when there is a match of data between the outer query and a sub-query
+It either evaluates for true or false on a match,
+
+```sql
+
+
+```
+
+`IN` works the similar way with sub-queries,        however we need to specifiy the columns, to match on, in the WHERE filter condition of the outer query, and the SELECT  statement of the sub-query
+
+```sql
+
+
+```
+
+`EXISTS` VS `IN`
+They are both the same, but with small difference
+the sub-query with EXISTS looks like a corrleated sub-query which we said previously can be inefficent (technically it's a correlated sub-query )
+
+BUT,
+
+* `EXISTS` willl stop searching the sub-query when the condition is TRUE
+* `IN` collects all the results from a sub-query before passing to the outer query! which is potentially slower
+
+* tip: consider using `EXISTS` instead of `IN` with a sub-query
+
+`NOT EXIST` and `NOT IN` are the opposite, they check the presence of data in one table that is absent in another!
+
+`NOT IN` and NULLS
+there's one major issue using `NOT IN` with null values
+
+if the columns in the sub-query being evaluated for a non-match, contain null values, no result are returned
+
+```sql
+
+```
+
+to handle this behaviour, the sub-query needs `IS NOT NULL`
+
+```sql
+
+
+
+```
+
+* tip: consider using `not exists` instead of `not in` because of the nullish value misbehaviour!
+
+### Practice
+
+You want to know which country capitals have never been the closest city to recorded earthquakes. You decide to use NOT IN to compare Capital from the Nations table, in the outer query, with NearestPop, from the Earthquakes table, in a sub-query.
+
+```sql
+
+SELECT WorldBankRegion,
+       CountryName,
+       Capital
+FROM Nations
+WHERE Capital NOT IN
+ (SELECT NearestPop
+     FROM Earthquakes
+     WHERE NearestPop IS NOT NULL); -- filter condition
+
+```
+
+### Alternative methods 2
+
+inner join and left outer join
+
+An exclusive LEFT OUTER JOIN can be used to check for the presence of data in one table that is absent in another table.
+
+### Adv and disadv of all methods
+
 ## Query performance tuning
+
+in this section we're going to discuss:
+
+* how to quantify and measure performance
+* some performance techniques to use for performance tunning
+
+### Time statistics
+
+`statistics time` -> from slides
+
+* cpu time: slides
+* elapsed time; total duration of the query from Execution to returning the complete results back to us
+
+```sql
+SET statistics time  on
+
+-- your query
+
+SET statistics time off
+
+```
+
+Elapsed time vs cpu time
+
+### Page read statistics
+
+Another way of measureing performace is by measuring the amount of
+
+```sql
+-- Example 1
+SELECT CustomerID,
+       CompanyName,
+       (SELECT COUNT(*) 
+     FROM Orders AS o -- Add table
+  WHERE c.CustomerID = o.CustomerID) CountOrders
+FROM Customers AS c
+WHERE CustomerID IN -- Add filter operator
+       (SELECT CustomerID 
+     FROM Orders 
+  WHERE ShipCity IN
+            ('Berlin','Bern','Bruxelles','Helsinki',
+   'Lisboa','Madrid','Paris','London'));
+```
+
+the output will be look like
+
+```
+Table 'Customers'. Scan count 1, logical reads 2, physical reads 0,...
+Table 'Orders'. Scan count 2, logical reads 32, physical reads 0,...
+```
+
+we've read 32 data pages from memory to complete the query!
+
+> Awesome! Logical reads are a measure of the number of the 8-kilobyte pages read from memory to process and return the results of your query. In general, the more pages that need to be read the slower your query will run.
 
 ### indexes
 
@@ -347,3 +475,7 @@ A clustred index creates what is called a B-tree structure on a table.
 the root node contains ordered pointers to branch nodes which in turn contains orderd pointers to page nodes.
 
 the page node level contains all the 8 kilobyte data pages from the table with the data physically ordered by the columns(s) with the clustred index.
+
+Great job! A clustered index will reduce the number of logical reads because the index will direct the query to the table data pages that meet the filter condition. Without a clustered index, all pages are scanned.
+
+### Execution plans

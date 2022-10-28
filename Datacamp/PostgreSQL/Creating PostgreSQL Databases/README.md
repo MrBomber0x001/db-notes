@@ -28,7 +28,7 @@ CREATE TABLE business_type (
 
 -- Define the applicant table below
 CREATE TABLE applicant (
-    id serial PRIMARY KEY,
+      id serial PRIMARY KEY,
       name text NOT NULL,
       zip_code CHAR(5) NOT NULL,
       business_type_id INTEGER references business_type(id)
@@ -160,8 +160,10 @@ using data types wisely is computer sciene man :D
 - Restrictions can be imposed on columns values
   
   - VARCHAR(N)
-  
+
   - without specificying the N, it's equivalent to use `TEXT`
+
+  - allow strings that are less than N characters to be stored in the column without any error
 
 `CHAR`:
 
