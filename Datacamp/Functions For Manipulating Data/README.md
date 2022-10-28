@@ -519,3 +519,121 @@ WHERE LEN(first_name) < 5
    -- Look for this pattern in the email address: "j%[0-9]@yahoo.com"
  AND PATINDEX('j_a%@yahoo.com', email) > 0;
 ```
+
+## Recognizing Numeric Data Properties
+
+### Aggregate arithmetic functions
+
+### Analytic function
+
+#### Exercise
+
+```sql
+SELECT 
+ first_name,
+ last_name,
+ total_votes AS votes,
+    -- Select the number of votes of the next voter
+ LEAD(total_votes) OVER (ORDER BY total_votes) AS votes_next_voter,
+    -- Calculate the difference between the number of votes
+ LEAD(total_votes) OVER (ORDER BY total_votes) - total_votes AS votes_diff
+FROM voters
+WHERE country = 'France'
+ORDER BY total_votes;
+```
+
+```sql
+SELECT 
+ broad_bean_origin AS bean_origin,
+ rating,
+ cocoa_percent,
+    -- Retrieve the cocoa % of the bar with the previous rating
+ LAG(cocoa_percent) 
+  OVER(PARTITION  BY broad_bean_origin ORDER BY rating) AS percent_lower_rating
+FROM ratings
+WHERE company = 'Fruition'
+ORDER BY broad_bean_origin, rating ASC;
+```
+
+```sql
+SELECT 
+ first_name + ' ' + last_name AS name,
+ country,
+ birthdate,
+ -- Retrieve the birthdate of the oldest voter per country
+ FIRST_VALUE(birthdate) 
+ OVER (PARTITION BY country ORDER BY birthdate) AS oldest_voter,
+ -- Retrieve the birthdate of the youngest voter per country
+ LAST_VALUE(birthdate) 
+  OVER (PARTITION BY country ORDER BY birthdate ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS youngest_voter
+FROM voters
+WHERE country IN ('Spain', 'USA');
+```
+
+### Mathematical functions
+
+#### Exercise
+
+```sql
+DECLARE @number1 DECIMAL(18,2) = -5.4;
+DECLARE @number2 DECIMAL(18,2) = 7.89;
+DECLARE @number3 DECIMAL(18,2) = 13.2;
+DECLARE @number4 DECIMAL(18,2) = 0.003;
+
+DECLARE @result DECIMAL(18,2) = @number1 * @number2 - @number3 - @number4;
+SELECT 
+ @result AS result,
+ -- Show the absolute value of the result
+ ABS(@result) AS abs_result,
+ -- Find the sign of the result
+ sign(@result) AS sign_result;
+```
+
+```sql
+SELECT
+ rating,
+ -- Round-up the rating to an integer value
+ CEILING(rating) AS round_up,
+ -- Round-down the rating to an integer value
+ FLOOR(rating) AS round_down,
+ -- Round the rating value to one decimal
+ ROUND(rating, 1) AS round_onedec,
+ -- Round the rating value to two decimals
+ ROUND(rating, 2) AS round_twodec
+FROM ratings;
+```
+
+```sql
+DECLARE @number DECIMAL(4, 2) = 4.5;
+DECLARE @power INT = 4;
+
+SELECT
+ @number AS number,
+ @power AS power,
+ -- Raise the @number to the @power
+ power(@number, @power) AS number_to_power,
+ -- Calculate the square of the @number
+ square(@number) num_squared,
+ -- Calculate the square root of the @number
+ sqrt(@number) num_square_root;
+```
+
+```SQL
+SELECT 
+ company, 
+    -- Select the number of cocoa flavors for each company
+ COUNT(*) AS flavors,
+    -- Select the minimum, maximum and average rating
+ MIN(rating) AS lowest_score,   
+ MAX(rating) AS highest_score,   
+ AVG(rating) AS avg_score,
+    -- Round the average rating to 1 decimal
+    ROUND(AVG(rating), 1) AS round_avg_score,
+    -- Round up and then down the aveg. rating to the next integer 
+    CEILING(AVG(rating)) AS round_up_avg_score,   
+ FLOOR(AVG(rating)) AS round_down_avg_score
+FROM ratings
+GROUP BY company
+ORDER BY flavors DESC;
+```

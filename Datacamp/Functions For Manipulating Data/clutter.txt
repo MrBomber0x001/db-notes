@@ -1,0 +1,88 @@
+## Aggregate arithmetic functions
+1. Aggregate arithmetic functions
+
+So, here we are at the last chapter of this course. You are almost done. In this chapter, you will learn about mathematical functions and how to apply them on data stored in SQL Server. A set of functions that come in handy when working with numeric data in SQL Server are functions performing calculations on groups of values. Some of the most important are: COUNT(), SUM(), MAX()/MIN(), AVG(). Let's take them one by one.
+2. COUNT()
+
+COUNT() is one of the most used functions in SQL Server. It returns the number of items found in a group. You can use it in three ways: with a parameter, prefixed by the word "ALL". The result is the number of all values from the expression. "ALL" serves as the default and it can be skipped from the function's parameter. Another option is to use a parameter prefixed by the word "DISTINCT". In this case, the result is the number of unique values from the group (excluding NULL values). The third option is to use only the * as a parameter, the result being the count of all rows from the query.
+3. COUNT() example
+
+This is the COUNT() function with all its flavors: the first two calls return the same value. When using "DISTINCT", the result is the number of unique values from a group. The star counts all rows from a query.
+4. SUM()
+
+Another well-known function is SUM(). It also has two flavors: you can use it with an expression prefixed by the optional word "ALL", the result being the sum of all values. When used with the word DISTINCT, only the unique values from the group are added.
+5. SUM() example
+
+Let's practice an example. This query retrieves information about the voters who voted 153 times. Four rows are returned. The query on the right side sums the values from the "total_votes" column. Notice that the first two calls of the function return identical results, ALL being an optional word: the result in all 4 rows are summed up. SUM() used with DISTINCT adds only the unique values, so the result of the last call is 153.
+6. MAX() and MIN()
+
+MAX() returns the maximum and MIN() returns the minimum value from a group. They can be used with the word DISTINCT in the parameter for taking into account only the unique values in a group. However, using DISTINCT doesn't really make any difference. The minimum value is the same, no matter how many identical values are in a group.
+7. MAX() and MIN() example
+
+The MIN/MAX() functions are simple and easy to use. This query returns the minimum recorded rating, as well as the maximum. You can see that the voters assigned both the minimum and the maximum possible score for some chocolate bars.
+8. AVG()
+
+AVG() returns the average of a group of values. You can use it with DISTINCT, similar to the other functions. When doing that, the average is calculated only for the unique values from the group. This is the AVG() function in action: the first result is the average of all values from the "rating" column. The second is the average of the unique ratings. The two averages are different.
+9. Grouping data
+
+When using these functions, keep in mind the following: if you want to apply them on groups of values (to calculate the average rating per each company, for example), you need to group your data with a GROUP BY statement, like in this query. 
+
+## Analytic functions
+
+1. Analytic functions
+
+SQL Server provides a useful set of analytic functions. Similar to the aggregate functions, these are used to calculate an aggregate value on a group of rows. The difference is that the analytic functions are computed on each row, instead of working on groups of data. Let's take them one by one.
+2. FIRST_VALUE()
+
+FIRST_VALUE() returns the first value in an ordered set of data. If you want to show in a query the minimum salary from each department per row, this is the function you can use. FIRST_VALUE() is used in combination with the OVER() clause. OVER() has the following components: PARTITION BY, used to split the output of the query into separate result sets. The function will then return a value for each partition. Using PARTITION BY is optional. ORDER BY is mandatory, because analytical functions are applied on an ordered result set. With the row or range frame, you establish the limits for the partitions on which the analytical function will be applied.
+3. LAST_VALUE()
+
+LAST_VALUE() is similar to FIRST_VALUE(), returning the last value in an ordered set. For calculating the last value for different groups of data, you need to make sure you know how each group or partition is created.
+4. Partition limits
+
+The limits of each partition can be explicitly specified after ORDER BY from the OVER clause. You need to mention the start and end boundaries for the partitions. Discussing the boundaries in more detail is outside the scope of this course. What you need to remember for now is that analytic functions are applied by default from the first row of the partition until the current row. If you want to apply the function on the entire subset of data, you need to explicitly add this clause: ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING. This means that all rows will be taken into consideration, from the first one in the partition until the last.
+5. FIRST_VALUE() and LAST_VALUE() example
+
+Let's see an example. You want to compare the total votes of each person with the minimum number of votes recorded by a person and with the maximum. You want to divide the voters per gender. This is how the query looks like. These are the results returned. First, information is shown for all female voters. On the same row, you see the votes for each person, the minimum number of votes registered by a female participant and the maximum number. Then, the same info is shown for the male voters. Notice that the minimum and maximum values are different.
+6. LAG() and LEAD()
+
+Another pair of useful functions is LAG() and LEAD(). You can use LAG() in SELECT statements for comparing values from the current row with values from the previous one. For example, you can compare the profit made by a company in a year with the profit from the previous year. With LEAD(), you can access values from a subsequent row in the same result set.
+7. LAG() and LEAD() example
+
+Let's look at a simple example from the "ratings" table. In this query, I select information about the different types of chocolates from the company "Felchlin", their cocoa percentage and the rating received. I want to compare the percentage of each bar with the one of the bar that received the nearest lower rating and also higher rating. Using the LAG() function, you can compare a value with one from the previous row. With LEAD(), you do the same comparison with a value from the next row. What's nice is that you can see these values per each row. 
+
+## Mathematical functions
+1. Mathematical functions
+
+In this video, I will discuss the most common mathematical functions. These functions are easy to learn and to remember because they are present in most programming languages. You also probably know them from school.
+2. ABS(numeric_expression)
+
+ABS(), short from absolute is a function returning the absolute value of an expression. The absolute value of a number x is defined as the non-negative value of x, without regard to its sign. This is how we use it in SQL Server. And these are the query results. The function always returns the positive value of a number, even if the number is negative.
+3. SIGN(numeric_expression)
+
+SIGN() is an easy function, that returns the sign of an expression. This will be -1 if the expression is a negative number, 0 if the expression is zero and +1 if it's positive. It has only one parameter (as you see in this query), which is the expression whose value we want to evaluate. This is what the query returns.
+4. Rounding functions
+
+The rounding functions are used to create approximations of an expression. CEILING() will return the smallest integer greater than or equal to the expression. FLOOR() returns the largest integer less than or equal to an expression. And ROUND() returns a numeric value, rounded to the specified length. Let's see some examples for these functions.
+5. Rounding functions example
+
+This is how CEILING() is used. For -50.49, the smallest integer larger than this value is -50 and for the positive 73.71, the CEILING() approximation is 74.
+6. Rounding functions example
+
+FLOOR() works in a similar way. It returns the largest integer that's smaller than our expression. For -50.49 this means -51 and for 73.71, it is 73.
+7. Rounding functions example
+
+ROUND() is used to approximate a number to a specified number of decimals. In this example, the first number is rounded to 1 decimal and the second is rounded to two decimals.
+8. Exponential functions
+
+For raising to a power or calculating the square root, there are built-in functions you can use. POWER() receives two parameters: an expression and the power to be raised to. If the power is always 2, you can use directly the SQUARE() function, which receives a numeric expression as parameter and returns its square value. There is also a built-in function for calculating the square root, SQRT(). This returns the square root of a positive number. One thing to remember when using these functions is that the numeric expression they receive as the first parameter must be a float number or an expression that can be implicitly converted to a float.
+9. POWER() example
+
+Here are some examples of calling the POWER() function with different values. The expression can be both a positive and a negative number. Notice that both the number and the power can be decimal numbers.
+10. SQUARE() example
+
+You can see here how SQUARE() is used. The results will always be positive when using this function.
+11. SQRT() example
+
+If you want to calculate the square root, this is how to do it. You can use it for both whole and decimal numbers. Keep in mind that SQL Server will generate an error if the expression whose square root we want to calculate is negative. 
+
