@@ -1,0 +1,255 @@
+
+## 2. Converting to Dates and Times
+## Build dates and times with offsets from parts
+1. Building dates from parts
+
+In chapter 1, we looked at some of what you can do with dates in SQL Server. In this chapter, we will take a step back and show how you can create dates. In lesson 2-1, we will build dates from component parts using a few T-SQL helper functions.
+2. Dates from parts
+
+SQL Server has six functions to build dates and times from component parts: the "from parts" series. The first is `DATEFROMPARTS()`, which takes integer values for year, month, and day and returns a `DATE` type. Its counterpart is `TIMEFROMPARTS()`, which takes integer values for hour, minute, second, fraction of a second, and precision--from 0 to 7--and returns the appropriate `TIME` data type. The classic `DATETIME` data type has its own function, `DATETIMEFROMPARTS()` which goes down to 3-millisecond granularity. For more precision, we can build a `DATETIME2` from parts using the `DATETIME2FROMPARTS()` function. Note that its inputs are the set combination of `DATEFROMPARTS()` and `DATETIMEFROMPARTS()`. There is a legacy function, `SMALLDATETIMEFROMPARTS()`. At this point, I recommend shying away from the `SMALLDATETIME` data type and just use `DATETIME2` instead. Finally, `DATETIMEOFFSETFROMPARTS()` takes the `DATETIME2` fields and adds inputs for the hour and minute offsets from UTC time so you can specify the time zone as well as time.
+3. Dates and times together
+
+The `DATETIMEFROMPARTS()` and `DATETIME2FROMPARTS()` functions will return complete dates. Let's look at an example. On November 11th, 1918 at 5:45 AM, the French and German governments signed an armistice, bringing major fighting during World War I to a close. We can represent this time using either a `DATETIME` or a `DATETIME2` type. To show specifics, I made up the number of seconds, saying it ended at 17 seconds and 995 milliseconds. The results are close to what we would expect with one subtle difference. Because the `DATETIME` data type is only precise to a three millisecond period, SQL Server rounds our result to the nearest allowed value, which is 997 milliseconds. The three `DATETIME2` types allow us to choose our desired precision.
+4. Working with offsets
+
+We will cover offsets in more detail in chapter 2, lesson 3. For now, here is a quick example. India Standard Time is 5 1/2 hours ahead of UTC. We can represent this in SQL Server using the `DATETIMEOFFSETFROMPARTS()` function, passing in 5 hours and 30 minutes as the offset values. We can also take this offset and bring it to another time zone using the `AT TIME ZONE` operator. Here, we bring it back to UTC. We can see that at 9 PM India Standard Time, it is 3:30 PM UTC.
+5. Gotchas when working with parts
+
+There are three things to keep in mind when working with the `FROMPARTS()` series of functions. First, if any of your input values is NULL, the result will always be NULL. Second, if any of your input values is invalid for the date part, you will receive an error message stating that arguments have values which are not valid. This will also pop up for example if you have a `DATETIME` with a year before 1753. Third, if you set the precision on `DATETIME2FROMPARTS()` to a number which is smaller than can hold the fraction part of your date, you will receive an error. 
+
+## Translating Date Strings
+1. Translating date strings
+
+In the last lesson, we learned about the `FROMPARTS()` series of functions, which build dates based off of integers. More typically, however, we will want to translate strings to dates like when reading data from CSVs or external sources. SQL Server has a number of techniques at our disposal to translate strings to date types.
+2. Casting strings
+
+The first function we will look at is `CAST()`. We saw `CAST()` already in chapter 1 when formatting dates for reporting. Here, we take a string and cast it as a date type. In this case, because my server uses US English as its locale, it can innately understand that '09/14/99' is actually September 14th of 1999. On a SQL Server instance with a French locale, this would be an error as it would look for the 9th day of the 14th month of 1999. `CAST()` is fast and is the ANSI standard, so it makes sense to use this as a default.
+3. Converting Strings
+
+We can, of course, also use the `CONVERT()` function here. Just like `CAST()`, `CONVERT()` serves multiple purposes and allows us to take a string and turn it into a date type. In this case, we convert a long string date to a `DATETIME2` with a precision of 1 millisecond. Because `CONVERT()` is not an ANSI standard, it is probably better to use `CAST()` instead of `CONVERT()` for this type of conversion. `CONVERT()` doesn't gain us anything like it does when formatting date values for reporting, so I'd recommend just using `CAST()` instead.
+4. Parsing strings
+
+The `PARSE()` function lets us translate locale-specific dates. It uses the .NET framework to perform string translation, which makes it a powerful function. For example, December 25th is Christmas, or Weihnachten in Germany. Germans write out long-form dates like this, with a two-digit day followed by the month name followed by the year. We can use the `PARSE()` function to translate this row. The output is exactly what we would expect: a `DATE` type. As a quick note, this is useful not only for translating non-default locales but we can handle even strings in your default locale.
+5. The cost of parsing
+
+I want to talk about the `PARSE()` function's performance for a moment so you can see just how slow it is. First, the `CONVERT()` function was able to make just a little over 250 thousand translations per second. Next up, `CAST()` clocked in at about 240 thousand translations per second. Although this does look like a big difference, I should note that `CAST()` and `CONVERT()` actually run the same underlying function in SQL Server's code, so this difference is noise. The performance difference for `PARSE()`, however, is anything but noise. It is an order of magnitude worse than the other functions. If you have a large number of rows and can use `CAST()` or `CONVERT()`, I recommend using one of those and saving `PARSE()` for small data sets or cases when you are willing to trade the performance hit for the flexibility.
+6. Setting languages
+
+## Working with offsets
+1. Working with offsets
+
+One of the trickier parts in handling dates is dealing with offsets. The classic date and time data types like `DATETIME` and `DATETIME2` have no in-built concept of time zone, so a date which reads 3 PM might be in UTC or it might be in some other time zone.
+2. Anatomy of a DATETIMEOFFSET
+
+In cases where knowing the time zone is important, SQL Server has another date type: the `DATETIMEOFFSET`. The `DATETIMEOFFSET` type is made up of three key components: a date, a time, and a UTC offset. All of this takes up 10 bytes of space compared to 8 bytes for a `DATETIME` or 6-8 bytes (depending on the level of time precision) for a `DATETIME2`.
+3. Anatomy of a DATETIMEOFFSET
+
+SQL Server will then display the output string with all three components separated by spaces.
+4. Changing offsets
+
+The `SWITCHOFFSET()` function allows us to change the time zone of a given input string. If you pass in a `DATETIME` or `DATETIME2`, `SWITCHOFFSET()` assumes you are in UTC. You can also pass in a `DATETIMEOFFSET` to move from one known time zone to another. Here we have the date from the prior slide. This date is in a time zone which is 4 hours slower than UTC, specifically, Eastern Daylight Time. If we want to change this to Los Angeles, California time, we will need to know that Los Angeles was in Pacific Daylight Time on April 10th, 2019. Pacific Daylight Time is UTC -7. This result tells us what time it was in Los Angeles when it was 12:59 PM in the eastern United States: it was 9:59 AM.
+5. Converting to DATETIMEOFFSET
+
+We can certainly use the `SWITCHOFFSET()` function to convert a UTC-based time from a `DATETIME2` data type into a `DATETIMEOFFSET` but there is an easier way if we just need to give the date and time an offset from UTC, and that is the `TODATETIMEOFFSET()` function. This function takes two parameters: an input date and a time zone. From there, it generates a DATETIMEOFFSET. Here, I have the date that I know is in Eastern Daylight Time but was stored as a `DATETIME2` data type. Now I have it as a `DATETIMEOFFSET`, which will allow me to compare dates and times from other machines which might use other time zones.
+6. Time zone swaps with TODATETIMEOFFSET
+
+The `TODATETIMEOFFSET()` function can help us in slightly more complicated scenarios as well. For example, suppose we have some date. We know the server saves data in Central Daylight time, or UTC -5. We want to create a `DATETIMEOFFSET`, but change the offset to align with our corporate headquarters in Bonn, Germany. In September of 2016, Germany was observing Central European Summer Time, or UTC +2. We can use `TODATETIMEOFFSET()` to make this move but it requires two steps. First, we need to add 7 hours to our input date because there is a 7-hour difference between UTC -5 and UTC +2. Now that we have the right time, we can tell SQL Server that the date has an offset of plus 2 hours. This gives us a result of 9:28 AM in Central European Summer Time.
+7. Discovering time zones
+
+For `SWITCHOFFSET()` and `TODATETIMEOFFSET()`, you need to know the offset number. If you don't know that, you can look it up using a Dynamic Management View called `sys.time_zone_info`. This returns time zones and current UTC offsets, making it great for current searches but less great when working with historical data, as there is no way to search for time zones on a particular date. 
+
+## Handling invalid dates
+1. Handling invalid dates
+
+So far, we have looked at the best case scenario: our input data is perfect and we get back the dates that we expect. In practice, however, we need to be prepared to deal with invalid dates when importing data from flat files or other external sources. This is where the class of error-safe date conversion functions come in.
+2. Error-safe date conversion functions
+
+With SQL Server 2012 and later, you have the ability to convert input strings to dates safely. Using the "unsafe" functions on the left will work just fine with good data, but if you have a single invalid date, these functions will return an error, causing your query to fail. By contrast, the "safe" functions on the right will handle invalid dates by converting them to NULL.
+3. When everything goes right
+
+As a quick reminder, the `PARSE()` function allows us to render an input date using a specific culture. For example, 01/08/2019 translates to January 8th, 2019 on machines with US locales, but it becomes August 1st, 2019 on machines in French locales.
+4. When everything goes wrong
+
+But let's move to 01/13/2019. Now, when we run this script, we get an error message telling us that the database engine could not convert our input string into a valid French date. Because there is no thirteenth month, the engine doesn't have any choice but to fail the query. Notice that even though the parse succeeded for our January 13th result, because the query failed, we get neither back.
+5. Doing right when everything goes wrong
+
+If we switch `PARSE()` to `TRY_PARSE()`, we can run this query again and this time, the query succeeds. Because there still isn't a thirteenth month in France, the database engine still has no idea what this date should be. But instead of failing and returning an error, the engine returns NULL and lets us deal with the results.
+6. The cost of safety
+
+You may be wondering what the performance impact of using these safe functions is. As we saw earlier, we know that `PARSE()` is much slower than `CAST()` or `CONVERT()`. So what happens when we switch over to the safe functions? It turns out that the safe functions have no discernible performance impact.
+7. The cost of safety
+
+`CONVERT()` and `CAST()` both converted 240-250 thousand rows per second regardless of whether we used the safe or unsafe version.
+8. The cost of safety
+
+And `PARSE()` lagged behind by more than an order of magnitude. This is because `PARSE()` uses the Common Language Runtime under the covers, reaching out to Microsoft .NET Framework code to translate strings to dates, whereas `CONVERT()` and `CAST()` are optimized functions which stay inside the SQL Server database engine confines. So we can see that there is no performance-related reason not to use the safe date conversion functions, and bias our code toward using `CONVERT()` and `CAST()` over `PARSE()` whenever possible.
+9. The cost of safety
+
+One other thing to note is that this conversion rate is a linear function of the number of rows, meaning that I will consistently perform 240-250 thousand conversions per second on my test machine, regardless of how many rows might be in the table. Your numbers will almost assuredly be different from mine, but you will see the same pattern even if the magnitudes differ.
+
+One last thing to hit before the exercises is the `SET LANGUAGE` syntax. You can use this command to change the language in your current session. This command changes the way SQL Server parses strings for dates and displays error and warning messages. In this case, I switch the language to French and try to parse a couple of dates. These casts would fail in English. But they succeed here, showing the correct date. 
+## 3. Aggregating Time Series Data
+1. Basic aggregate functions
+
+In the first two chapters, we have learned about different ways we can convert between strings and the different date and time data types. In this chapter, we will learn about different functions which help us aggregate time series data.
+2. Key aggregation functions
+
+SQL Server has a dozen or so aggregate functions. In this lesson, we will learn about five of these plus an extra variant. There are two counting functions: `COUNT()` and `COUNT_BIG()`. Both of these return the total number of rows for a given expression. `COUNT()` returns an integer and `COUNT_BIG()` returns a 64-bit integer or `BIGINT`. You can also get the cardinality of an expression by adding the `DISTINCT` clause inside `COUNT()` and specifying a column or expression. Aside from getting counts, there are a few other aggregate functions we will look at. The first is `SUM()`, which provides the sum of an expression. If you only want the minimum or maximum value for an expression, you can use `MIN()` and `MAX()` respectively.
+3. What counts with COUNT()
+
+The `COUNT()` function has some interesting behavior depending upon the expression you put into it. If you use `COUNT(*)`, you will get back the total number of rows in the table. But that also holds true for `COUNT(1)`, saying that `COUNT()` doesn't care about the expression. Most interesting of these, you can even put in an illegal operation like diving 1 by 0 and the `COUNT()` function will happily give you the number of rows. But if you specify a column, now it gives you the count of values where that column is not NULL. Here, we get the count of rows with a non-NULL year. In the prior slide, I mentioned expressions rather than columns. That's because you can do things like this, where I use the `NULLIF()` function to set the year value to NULL if it is 1990 and then we get the count of non-NULL values.
+4. Distinct counts
+
+When using `COUNT(DISTINCT)`, we need to define an expression which includes a column. Then we get the number of unique, non-NULL values which appear in the data set. In this query, we get the distinct count of calendar years as a "Years" column and the distinct number of non-2010 years as Y2. This gives us 50 rows for Years and 49 for Y2.
+5. Filtering aggregates with CASE
+
+You can also build expressions with the `CASE` operator. These expressions allow you to build in filters to perform aggregates on particular subsets of the data. In this example, we want to get the latest incident date for incident types 1 and 2 and pivot the data so we have one column per incident type. To do this, we combine `MAX()` with a `CASE` statement which returns the incident date when we match incident types and returns NULL otherwise. We can see the results of this test, showing that incident type 2's last occurrence was June 29th. The code for this technique becomes a bit unwieldy as the number of pivot operations increases, but as far as performance goes, this is one scan of the incident roll-up table no matter how many incident types we pivot. 
+
+## Statistical aggregate functions
+1. Statistical aggregate functions
+
+In the prior lesson, we learned about a number of aggregate functions. Now we're going to cover a couple more, as well as our first of several window functions.
+2. Statistical aggregate functions
+
+SQL Server has five aggregate functions which relate to statistics. The `AVG()` function gives us the mean of the expression you pass in. SQL Server has two standard deviation functions. The first, `STDEV()`, is the sample standard deviation. The second, `STDEVP()` is the population standard deviation. Generally, you'll want to use the sample standard deviation unless you know you're looking at the entire population. The same goes with variance, where we have `VAR()` for sample variance and `VARP()` for population variance.
+3. What about median?
+
+You may have noticed in the prior list that we have mean but no median. SQL Server does not have a median function built-in. What we do have is the `PERCENTILE_CONT()` function. The `PERCENTILE_CONT()` function takes a parameter, which is the percentile you'd like. Here, we want the 50th percentile, or median. Then, you specify the group, which is how you order the data set. We want to look at a column named `SomeVal`. Finally, we have the `OVER()` clause, which allows us to partition the data and get a median--that is, it helps us define our window. Notice that we have a `TOP(1)` clause as well. Because `PERCENTILE_CONT()` is a window function, it will return one row for every row sent in. This means it is not an aggregate function like the others, so we need to use `TOP(1)`, `DISTINCT`, or something else to identify that we just want one row.
+4. But how bad is it?
+
+This is an execution plan for the `AVG()` function against a table with 12 million rows. SQL Server scans the 12 million rows, aggregates the data internally, and eventually gives us the one row we expect.
+5. This bad
+
+This is the execution plan for calculating the median. If it's too small for your screen, don't worry--there won't be a quiz. What happens is that the 12 million rows get scanned, stored in temporary storage called a lazy spool, iterated over each other, projected out in a segment - sequence - compute combination which happens with window functions, joined again to the lazy spool, aggregated, joined again to the lazy spool, and finally we get back the one row we need. If this seems like it's overly complicated, you're absolutely right.
+6. The cost of median
+
+This chart sums up calculating median versus mean on a 12-million row table. It took 68.5 seconds on my computer and had to run single-threaded. By contrast, SQL Server was able to run the `AVG()` function against all 24 of my cores, taking 8 seconds of CPU time and turning it into a third of a second of real time. There's also a huge difference in reads, 72 million versus 39 thousand. The 72 million reads comes from reading the lazy spool and especially all of those joins. In short, this is not something you want running against large tables on a busy production server. 
+
+##  Downsampling and upsampling data
+
+1. Downsampling and upsampling data
+
+Throughout this chapter so far, we have looked at various aggregation functions. Now I want to pivot slightly and think about periodicity, or the grain of our time data.
+2. Data in nature
+
+Suppose we have some table which has some date. When we query that data, we're going to get results. For `DATETIME` and `DATETIME2` data types, we will get back our data as a combination of date and time. This is useful information for point analysis--who did what when--but we will often want to change this grain.
+3. Downsampling data
+
+Downsampling is another term for changing to a coarser grain. For example, we can cast our `DATETIME` type to a date type. This gives us a coarser grain: daily data rather than a combination of date and time.
+4. Further downsampling
+
+This is not the only form of downsampling, however--we can also downsample to other grains. For example, suppose we want to roll up to the hour instead of day. We can use a combination of the `DATEADD()` and `DATEDIFF()` functions to do this. To understand this function, let's start from the inside and work our way out. We figure out the number of hours from SQL Server's starting point (that is, time 0) until our customer visit start. The `DATEDIFF()` function lops off any unused date or time parts, so anything lower than the hour goes away and `DATEDIFF()` returns an integer representing the number of hours from time 0 until `SomeDate`. Then, we add that number of hours to time 0, giving us a rounded total. The end result is a `DATETIME` data type rounded to the nearest hour.
+5. What about upsampling?
+
+To this point, I've focused on downsampling because it is by far the more useful of the two. Upsampling is the opposite of downsampling: taking aggregated data and attempting to disaggregate it. Downsampling typically works by summing up or counting the results in our table, so it is pretty easy to do. Upsampling, meanwhile, requires an allocation rule: if you have data at an hourly grain, how will you allocate it to each of the 60 minutes? This leads to the biggest problem of upsampling: it provides an artificial granularity. With our hourly data, by allocating records to particular minutes, we have to pretend that we know more than we really do. Still, there are uses for upsampling data. For example, with data at the daily grain, we might be able to use a Poisson or a hypergeometric to model occurrences and generate test data at the lower grain. We can also use upsampled data to get an idea of what a normal minute or hour might look like given daily data, although finding any answer better than a uniform distribution will require some knowledge of the underlying distribution of events. Downsampling is much more common and much more acceptable in the business world than upsampling--for every time I have needed to upsample data, I downsample, without exaggeration, hundreds of times. 
+
+## Grouping by ROLLUP, CUBE, and GROUPING SETS
+
+1. Grouping by ROLLUP, CUBE, and GROUPING SETS
+
+Before we wrap up this chapter on aggregating time series data, let's take a quick look at how three additional operators can help us refine our aggregates.
+2. Hierarchical rollups with ROLLUP
+
+The first operator is `ROLLUP`, which works best with hierarchical data. The `WITH ROLLUP` clause comes after `GROUP BY` and tells SQL Server to roll up the data. `ROLLUP` will take each combination of the first column--month in this case--followed by each matching value in the second column, and so on, showing our aggregates for each. `ROLLUP` is great for a summary of hierarchical data, but if you don't have that, you can use one of the other grouping operators.
+3. Cartesian aggregation with CUBE
+
+For cases where you want to see the full combination of all aggregations between columns, CUBE is at our disposal. The `CUBE` operator works just like `ROLLUP`, sliding in right after the `GROUP BY` clause. On the right, you can see a sample of the rows returned from a `CUBE` operation. In any realistic scenario you will probably get far more results than you really want. That's where the third option comes into play.
+4. Define grouping sets with GROUPING SETS
+
+With `GROUPING SETS`, we control the levels of aggregation and can include any combination of aggregates we need. For example, in this query, we define two grouping sets: one on the combination of incident type and office, and an empty grouping set to give us the grand total. This results in one row with the grand total followed by each of the specific combinations of incident type and office. If we then want to include separate aggregates like all of the incident types broken out regardless of office, we can add those as additional grouping sets. You can create any `ROLLUP` or `CUBE` operation with a series of `GROUPING SETS` but for larger numbers of columns, it's definitely quicker to write `WITH ROLLUP` than to specify all of the grouping sets needed to replicate its behavior. 
+
+## Using aggregation functions over windows
+
+1. Using aggregation functions over windows
+
+In the last chapter, we looked at different ways to group and reshape data over time. Sometimes, we would like to see the end results of aggregation without changing the grain of our data. That's where window functions come into play.
+2. Ranking functions
+
+There are four ranking window functions which SQL Server supports: `ROW_NUMBER()`, `RANK()`, `DENSE_RANK()`, and `NTILE()`. The first, `ROW_NUMBER()`, provides a guaranteed unique, ascending integer value which starts from 1 and continues through the end of the set. `RANK()` provides an ascending integer value which starts from 1, but it is not guaranteed to be unique. Instead, any ties in the window will get the same value and then the next value gets its `ROW_NUMBER()` value. If, for example, the second and third entries are tied, both will get a rank of 2 and the fourth entry will get a rank of 4. `DENSE_RANK()` behaves like `RANK()` except that it does not skip numbers even with ties. If the second and third entries are tied, both will get a dense rank of 2 and the fourth entry will get a dense rank of 3. For the next couple of examples, we will use this simple table of runs scored.
+3. Calculating row numbers
+
+All ranking functions require an `OVER()` clause with an `ORDER BY` clause inside it. Here, we are ordering our results by the number of runs scored in descending order. What we get back is a unique, ascending integer starting from 1.
+4. Calculating ranks and dense ranks
+
+All ranking functions have the same syntax. Here you can see `RANK()` and `DENSE_RANK()` together, looking the same as `ROW_NUMBER()` did. The difference is in the results: whereas `ROW_NUMBER()` gave us one unique integer per record, we get four groups of results. The difference between `RANK()` and `DENSE_RANK()` is how ties behave.
+5. Partitions
+
+In addition to an `ORDER BY` clause, the `OVER()` clause in a window function can accept a `PARTITION BY` clause which splits up the window by some column or set of columns. Now we'll introduce the two teams who played and partition runs scored by team. SQL Server handles this and provides us a unique, ascending row number for each team, so the Arizona team has three entries and the Florida team has three entries. Note that Florida's row numbers reset to 1--we are guaranteed to start at 1 for each window and the `PARTITION BY` clause defines our window.
+6. Aggregate functions
+
+In addition to ranking functions, we can also use windows on aggregate functions. As a quick reminder, aggregate functions include functions like `AVG()`, `COUNT()`, `MAX()`, `MIN()`, and `SUM()`, as well as several others. Here, we want to see the maximum number of runs each team scored as well as the runs they scored in a particular game. Instead of writing two separate queries, we can get both pieces of information in a single query. This lets us see how close each team is to peak offensive efficiency.
+7. Aggregations with empty windows
+
+Going one step further, an aggregate function with an empty `OVER()` clause does the same thing as the non-windowed aggregation function except for one difference: it does not require that we group by non-aggregated columns. Here is an example where we use the `MAX()` function with an empty `OVER()` clause. What we get back is every single row as well as the maximum number of runs scored. This is akin to writing a subquery or common table expression which queries the data twice, once to get the individual rows and a second time to get the maximum number of runs. 
+
+## Calculating running totals and moving averages
+1. Calculating running totals and moving averages
+
+Window functions have a number of great uses and in this lesson we are going to learn about two of them: calculating running totals and moving averages.
+2. Calculating running totals
+
+Just like in the last lesson, we will use the same motivating example, but with one extra column to represent each game in the series. Here, we see once more six games and the number of runs scored by team. What we would like to do is calculate an ongoing tally by team of how many runs have been scored. For our Arizona team, we want to count in order. First, we see that they scored eight runs. Then, in the next game, they scored 6, for a total of 14. In their third game, they scored 3 more, for a total of 17. The Florida team has a similar output, adding up to 20. So how do we do this with T-SQL?
+3. Running totals
+
+To create the SQL query on the left, we need to have a few pieces in place. First, we are going to need the per-game values we want to know about: team, game, and runs scored. Then we want to know the running total of runs scored, so we will need to use the `SUM()` function to sum up values. This has to be a window function because that's the way we will get both the detail records and the aggregated running total in the same query, so we will need an `OVER()` clause. Inside the `OVER()` clause, we want to partition our running totals by team, showing totals on a per-team basis rather than for all teams. Then, we need to give SQL Server the appropriate expression for ordering. We'll order by game in the series. The next part of our `OVER()` clause is a choice between `RANGE` and `ROWS`. For this query, we want the range, but we'll cover the difference in a moment. Next up, we need to know the preceding expression: how far back do we want to look? For a running total, we want to go back to the beginning of our set, so we use `UNBOUNDED PRECEDING`. Finally, we add the window following expression, which in this case is the current row: don't look any further than the present row when summing things up. That will give us a running total.
+4. RANGE and ROWS
+
+When creating window functions, you have two options: `RANGE` and `ROWS`. `RANGE` will specify a range of results whereas `ROWS` focuses on the specific rows. This has a couple of follow-on implications. First, `RANGE` will process all duplicate records at the same time, so if we have two instances of Game 1, `RANGE` will sum both of them together for both records. `ROWS` will take duplicates one at a time, meaning the first Game 1 will have a total of that score and the second Game 1 will have as its total the sum of both. Also, `RANGE` supports only two scenarios: specifically unbounded and current row. `ROWS` also allows you to specify a number of rows back or forward. This will help us when calculating moving averages.
+5. Calculating moving averages
+
+Let's look at the current and prior games to calculate the moving average. For Arizona, we start with 8 runs. Then they scored 6, so over a two-game stretch they averaged 7. For the third game, we look at the 6 in game 2 and 3 in game 3 and get 4 because of integer math. Florida behaves similarly. 
+## Working with LAG() and LEAD()
+1. Working with LAG() and LEAD()
+
+The `LAG()` and `LEAD()` functions give us the ability to link together past, present, and future in the same query.
+2. The LAG() window function
+
+Let's take a look first at the `LAG()` function. `LAG()` gives you a prior row in a window given a particular partition strategy and ordering. As you can see here, it looks a lot like an aggregate window function, where it takes in as a parameter an expression. In this case, my expression is the `NumberOfVisits` column. We then partition by customer ID and order by the month start date. The result is a table which includes the current row as well as the prior record's row. We don't have any data for customer 1 prior to December of 2018, so the prior column is NULL.
+3. The LEAD() window function
+
+The `LEAD()` window function is just like `LAG()` except that it looks at the next record instead of the prior record. Our query is exactly the same as the prior example except for changing `LAG()` to `LEAD()` and switching the order of columns. The results, as you might expect, return the current number of visits and the next month's number of visits per customer. Once we get to the end of the data set, the final record's next month value will be NULL because we will have reached the end of the window.
+4. Specifying number of rows back
+
+Both `LAG()` and `LEAD()` take an optional second parameter which represents the number of rows back to look. In this example, we include two `LAG()` functions, one looking two rows back and the other looking one row back. The result is that each row has up to three numbers, representing the last three months of visitation data. This can help management and report viewers see short-term trends, such as the jump between December and January.
+5. Windows and filters
+
+Before we get into the exercises, I would like to clarify one last thing around windows. Let's say we have a simple SQL query like this one, where we get a lagged value for each date. Our end result looks like this table, where we have one row per day. As expected, the first day's prior value is NULL. Then, let's add a filter where the date must be greater than January 2nd. The end result gives us one row and its prior value is NOT 6. Instead, it is NULL. The reason for this outcome is that `LAG()` and `LEAD()` execute after the `WHERE` clause, so we've already thrown out the records with data for January 1st and 2nd, leaving January 3rd as our first available date. Without those thrown-out records, we don't have any knowledge of what the prior value was.
+6. Windows and filters and CTEs
+
+If you do want to preserve these prior values, there are a few ways we can do this. One method is to use a common table expression. In our query, we run `LAG()` against the entire data set so that we have every prior value. We'll call that result "records" and reference it in the main query, where we subsequently filter out values earlier than January 3rd. The end result is that we still get one row back, but this time we know the prior value as well as the current value. 
+
+##  Finding maximum levels of overlap
+
+1. Finding maximum levels of overlap
+
+As we wrap up this course, I want to cover a more complicated scenario and show that the best result in SQL is not necessarily the most straightforward.
+2. Start with some data
+
+Suppose we have a store where we keep track of when people enter and leave as well as the number of products they order. We would like to make use of this data to determine how many staff we should have in our stores. The way we will determine this is to count the maximum number of people in the store at any one time.
+3. Reasoning through the problem
+
+For example, the first two customers are in the store at the same time from 3:35 PM until 4:01 PM. The first customer then leaves before the third customer arrives, so the maximum at that point is 2.
+4. Reasoning through the problem
+
+Over the entire set, the maximum number of customers is three. The first of the three customers enters at 4:35 PM and the last enters at 5:55 before that customer leaves at 5:57 PM.
+5. Algorithm, step 1
+
+To perform this operation efficiently in T-SQL, the first thing we want to do is break up our start and end times into separate rows so that we have an event per entrance and an event per exit. We will add two more columns: entry count and start ordinal. Entry count helps us keep track of the number of people in the store at a given time and decrements whenever a person leaves. Start ordinal gives us the order of entry, so it will be NULL for any exit.
+6. Algorithm, step 1
+
+And here is how the results look. To make best use of screen space, I removed the dates from these because all events are on the same day. We'll put this into a common table expression which I'll call `StartStopPoints`, as it represents the starting and stopping points for each customer visit.
+7. Algorithm, step 2
+
+This next common table expression, which I will call `StartStopOrder`, takes each of our start and end times in the first query and adds a new ordinal value arranging when people leave and enter. We order by time of entry and then by start ordinal. Ordering by start ordinal is important because we have exits marked as NULL values, so they will sort before the entrances. That way, if a person walks out the door exactly when another person walks in the door, we don't say there were two people in--we decrement the counter for the person leaving and then increment the counter for the person entering.
+8. Algorithm, step 2
+
+The `StartEndOrdinal` value gives us an ordering of the order in which people entered and left the store. Already we can piece together when there will be multiple people in the store: if we see positive entry counts start to outnumber negative entry counts, we have more people in the store.
+9. Algorithm, step 2
+
+A brute force technique might be to sum the value of `EntryCount` using a running total, which we have seen earlier in this chapter. For example, after row 6, we have 2 people in the store: 4 entrances and 2 exits. This works, but there is a better way.
+10. Algorithm, step 3
+
+We will have two `StartEndOrdinal` rows for every `StartOrdinal` row, so if we double the `StartOrdinal` value and subtract from it the `StartEndOrdinal` value, that leaves us with the number of people in the store at any given time. Here are the first six results.
+11. Algorithm, step 3
+
+And putting this into SQL, we get back our final total of 3 concurrent visitors. 
