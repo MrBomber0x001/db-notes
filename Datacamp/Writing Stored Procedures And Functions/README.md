@@ -38,16 +38,16 @@ is the second datapart on startDate is equal to zero or not
 
 ```sql
 SELECT
-	-- Count the number of IDs
-	COUNT(ID) AS Count,
+ -- Count the number of IDs
+ COUNT(ID) AS Count,
     -- Use DATEPART() to evaluate the SECOND part of StartDate
     "StartDate" = CASE WHEN datepart(second, StartDate) = 0 THEN 'SECONDS = 0'
-					   WHEN datepart(second, StartDate) > 0 THEN 'SECONDS > 0' END
+        WHEN datepart(second, StartDate) > 0 THEN 'SECONDS > 0' END
 FROM CapitalBikeShare
 GROUP BY
     -- Use DATEPART() to Group By the CASE statement
-	CASE WHEN datepart(second, StartDate) = 0 THEN 'SECONDS = 0'
-		 WHEN datepart(second, StartDate) > 0 THEN 'SECONDS > 0' END
+ CASE WHEN datepart(second, StartDate) = 0 THEN 'SECONDS = 0'
+   WHEN datepart(second, StartDate) > 0 THEN 'SECONDS > 0' END
 ```
 
 third exercies: Which day of week is busiest?
@@ -55,9 +55,9 @@ third exercies: Which day of week is busiest?
 ```sql
 SELECT
     -- Select the day of week value for StartDate
-	datename(weekday, StartDate) as DayOfWeek,
+ datename(weekday, StartDate) as DayOfWeek,
     -- Calculate TotalTripHours
-	sum(datediff(second, StartDate, EndDate))/ 3600 as TotalTripHours
+ sum(datediff(second, StartDate, EndDate))/ 3600 as TotalTripHours
 FROM CapitalBikeShare
 -- Group by the day of week
 GROUP BY datename(weekday, StartDate)
@@ -72,12 +72,12 @@ in the previous exercise 'Satureday' was the busiest day of the week, Do you won
 
 ```sql
 SELECT
-	-- Calculate TotalRideHours using SUM() and DATEDIFF()
-  	sum(datediff(second, StartDate, EndDate))/ 3600 AS TotalRideHours,
+ -- Calculate TotalRideHours using SUM() and DATEDIFF()
+   sum(datediff(second, StartDate, EndDate))/ 3600 AS TotalRideHours,
     -- Select the DATE portion of StartDate
-  	convert(date, StartDate) AS DateOnly,
+   convert(date, StartDate) AS DateOnly,
     -- Select the WEEKDAY
-  	datename(weekday, convert(date, StartDate)) AS DayOfWeek
+   datename(weekday, convert(date, StartDate)) AS DayOfWeek
 FROM CapitalBikeShare
 -- Only include Saturday
 WHERE datename(WEEKDAY, StartDate) = 'Saturday'
@@ -169,12 +169,12 @@ SELECT @ShiftStartDateTime
 -- Declare @Shifts as a TABLE
 declare @Shifts Table(
     -- Create StartDateTime column
-	 StartDateTime datetime ,
+  StartDateTime datetime ,
     -- Create EndDateTime column
-	EndDateTime datetime)
+ EndDateTime datetime)
 -- Populate @Shifts
 insert into @Shifts (StartDateTime, EndDateTime)
-	SELECT '3/1/2018 8:00 AM', '3/1/2018 4:00 PM'
+ SELECT '3/1/2018 8:00 AM', '3/1/2018 4:00 PM'
 SELECT *
 FROM @Shifts
 ```
@@ -183,17 +183,17 @@ FROM @Shifts
 -- Declare @RideDates
 DECLARE @RideDates TABLE(
     -- Create RideStart
-	RideStart date,
+ RideStart date,
     -- Create RideEnd
-	RideEnd date)
+ RideEnd date)
 -- Populate @RideDates
 INSERT INTO @RideDates(RideStart, RideEnd)
 -- Select the unique date values of StartDate and EndDate
 SELECT DISTINCT
     -- Cast StartDate as date
-	CAST(StartDate as date),
+ CAST(StartDate as date),
     -- Cast EndDate as date
-	CAST(EndDate as date)
+ CAST(EndDate as date)
 FROM CapitalBikeShare
 SELECT *
 FROM @RideDates
@@ -349,9 +349,9 @@ RETURNS TABLE
 AS
 RETURN
 SELECT
-	StartStation,
+ StartStation,
     -- Use COUNT() to select RideCount
-	COUNT(ID) as RideCount,
+ COUNT(ID) as RideCount,
     -- Use SUM() to calculate TotalDuration
     SUM(DURATION) as TotalDuration
 FROM CapitalBikeShare
@@ -365,21 +365,21 @@ GROUP BY StartStation;
 CREATE FUNCTION CountTripAvgDuration (@Month CHAR(2), @Year CHAR(4))
 -- Specify return variable
 RETURNS @DailyTripStats TABLE(
-	TripDate	date,
-	TripCount	int,
-	AvgDuration	numeric)
+ TripDate date,
+ TripCount int,
+ AvgDuration numeric)
 AS
 BEGIN
 -- Insert query results into @DailyTripStats
 INSERT @DailyTripStats
 SELECT
     -- Cast StartDate as a date
-	CAST(StartDate AS date),
+ CAST(StartDate AS date),
     COUNT(ID),
     AVG(Duration)
 FROM CapitalBikeShare
 WHERE
-	DATEPART(month, StartDate) = @Month AND
+ DATEPART(month, StartDate) = @Month AND
     DATEPART(year, StartDate) = @Year
 -- Group by StartDate as a date
 GROUP BY CAST(StartDate AS date)
@@ -475,9 +475,9 @@ SELECT
 ```sql
 -- Create @StationStats
 DECLARE @StationStats TABLE(
-	StartStation nvarchar(100),
-	RideCount int,
-	TotalDuration numeric)
+ StartStation nvarchar(100),
+ RideCount int,
+ TotalDuration numeric)
 -- Populate @StationStats with the results of the function
 INSERT INTO @StationStats
 SELECT TOP 10 *
@@ -497,4 +497,298 @@ change the function or modify using ALTER Function
 alter function SumStationStats (@EndDate as datetime = '1/01/2017')
 ...
 ..
+```
+
+### Exercise
+
+```sql
+-- Update SumStationStats
+CREATE OR ALTER FUNCTION dbo.SumStationStats(@EndDate AS date)
+-- Enable SCHEMABINDING
+RETURNS TABLE WITH SCHEMABINDING
+AS
+RETURN
+SELECT
+ StartStation,
+    COUNT(ID) AS RideCount,
+    SUM(DURATION) AS TotalDuration
+FROM dbo.CapitalBikeShare
+-- Cast EndDate as date and compare to @EndDate
+WHERE CAST(EndDate AS Date) = @EndDate
+GROUP BY StartStation;
+```
+
+```sql
+-- Create the stored procedure
+CREATE PROCEDURE dbo.cuspSumRideHrsSingleDay
+    -- Declare the input parameter
+ @DateParm date,
+    -- Declare the output parameter
+ @RideHrsOut numeric OUTPUT
+AS
+-- Don't send the row count 
+SET NOCOUNT ON
+BEGIN
+-- Assign the query result to @RideHrsOut
+SELECT
+ @RideHrsOut = SUM(DATEDIFF(second, StartDate, EndDate))/3600
+FROM CapitalBikeShare
+-- Cast StartDate as date and compare with @DateParm
+WHERE CAST(StartDate AS date) = @DateParm
+RETURN
+END
+```
+
+## Oh crud
+
+```sql
+-- Create the stored procedure
+CREATE PROCEDURE dbo.cusp_RideSummaryCreate 
+    (@DateParm date, @RideHrsParm numeric)
+AS
+BEGIN
+SET NOCOUNT ON
+-- Insert into the Date and RideHours columns
+INSERT INTO dbo.RideSummary(Date, RideHours)
+-- Use values of @DateParm and @RideHrsParm
+VALUES(@DateParm, @RideHrsParm) 
+
+-- Select the record that was just inserted
+SELECT
+    -- Select Date column
+ Date,
+    -- Select RideHours column
+    RideHours
+FROM dbo.RideSummary
+-- Check whether Date equals @DateParm
+WHERE Date = @DateParm
+END;
+```
+
+```sql
+-- Create the stored procedure
+CREATE PROCEDURE dbo.cuspRideSummaryUpdate
+ -- Specify @Date input parameter
+ (@Date date,
+     -- Specify @RideHrs input parameter
+     @RideHrs numeric(18,0))
+AS
+BEGIN
+SET NOCOUNT ON
+-- Update RideSummary
+UPDATE RideSummary
+-- Set
+SET
+ Date = @Date,
+    RideHours = @RideHrs
+-- Include records where Date equals @Date
+WHERE Date = @Date
+END;
+```
+
+```sql
+-- Create the stored procedure
+CREATE PROCEDURE dbo.cuspRideSummaryDelete
+ -- Specify @DateParm input parameter
+ (@DateParm date,
+     -- Specify @RowCountOut output parameter
+     @RowCountOut int OUTPUT)
+AS
+BEGIN
+-- Delete record(s) where Date equals @DateParm
+DELETE FROM dbo.RideSummary
+WHERE Date = @DateParm
+-- Set @RowCountOut to @@ROWCOUNT
+SET @RowCountOut = @@ROWCOUNT
+END;
+```
+
+## Oh EXEC
+
+```sql
+-- Create @RideHrs
+DECLARE @RideHrs AS numeric(18,0)
+-- Execute the stored procedure
+EXEC dbo.cuspSumRideHrsSingleDay
+    -- Pass the input parameter
+ @DateParm = '3/1/2018',
+    -- Store the output in @RideHrs
+ @RideHrsOut = @RideHrs OUTPUT
+-- Select @RideHrs
+SELECT @RideHrs AS RideHours
+```
+
+```sql
+-- Create @ReturnStatus
+DECLARE @ReturnStatus AS int
+-- Execute the SP
+EXEC @ReturnStatus = dbo.cuspRideSummaryUpdate
+    -- Specify @DateParm
+ @DateParm = '3/1/2018',
+    -- Specify @RideHrs
+ @RideHrs = 300
+
+-- Select the columns of interest
+SELECT
+ @ReturnStatus AS ReturnStatus,
+    Date,
+    RideHours
+FROM dbo.RideSummary 
+WHERE Date = '3/1/2018';
+```
+
+```sql
+-- Create @ReturnStatus
+DECLARE @ReturnStatus AS int
+-- Create @RowCount
+DECLARE @RowCount AS int
+
+-- Execute the SP, storing the result in @ReturnStatus
+EXEC @ReturnStatus = dbo.cuspRideSummaryDelete 
+    -- Specify @DateParm
+ @DateParm = '3/1/2018',
+    -- Specify RowCountOut
+ @RowCountOut = @RowCount OUTPUT
+
+-- Select the columns of interest
+SELECT
+ @ReturnStatus AS ReturnStatus,
+    @RowCount as 'RowCount';
+```
+
+## TRY CATCH
+
+```sql
+-- Alter the stored procedure
+CREATE OR ALTER PROCEDURE dbo.cuspRideSummaryDelete
+ -- Specify @DateParm
+ @DateParm nvarchar(30),
+    -- Specify @Error
+ @Error nvarchar(max) = NULL OUTPUT
+AS
+SET NOCOUNT ON
+BEGIN
+  -- Start of the TRY block
+  BEGIN TRY
+     -- Delete
+      DELETE FROM RideSummary
+      WHERE Date = @DateParm
+  -- End of the TRY block
+  END TRY
+  -- Start of the CATCH block
+  BEGIN CATCH
+  SET @Error = 
+  'Error_Number: '+ CAST(ERROR_NUMBER() AS VARCHAR) +
+  'Error_Severity: '+ CAST(ERROR_SEVERITY() AS VARCHAR) +
+  'Error_State: ' + CAST(ERROR_STATE() AS VARCHAR) + 
+  'Error_Message: ' + ERROR_MESSAGE() + 
+  'Error_Line: ' + CAST(ERROR_LINE() AS VARCHAR)
+  -- End of the CATCH block
+  END CATCH
+END;
+```
+
+```sql
+-- Create @ReturnCode
+DECLARE @ReturnCode int
+-- Create @ErrorOut
+DECLARE @ErrorOut nvarchar(max)
+-- Execute the SP, storing the result in @ReturnCode
+EXECUTE @ReturnCode = dbo.cuspRideSummaryDelete
+    -- Specify @DateParm
+ @DateParm = '1/32/2018',
+    -- Assign @ErrorOut to @Error
+ @Error = @ErrorOut OUTPUT
+-- Select @ReturnCode and @ErrorOut
+SELECT
+ @ReturnCode AS ReturnCode,
+    @ErrorOut AS ErrorMessage;
+```
+
+## CASE STUDY
+
+```sql
+SELECT
+ -- PickupDate is after today
+ COUNT (CASE WHEN PickupDate > GetDate() THEN 1 END) AS 'FuturePickup',
+    -- DropOffDate is after today
+ COUNT (CASE WHEN DropOffDate > GetDate() THEN 1 END) AS 'FutureDropOff',
+    -- PickupDate is after DropOffDate
+ COUNT (CASE WHEN PickupDate > DropOffDate THEN 1 END) AS 'PickupBeforeDropoff',
+    -- TripDistance is 0
+ COUNT (CASE WHEN TripDistance = 0 THEN 1 END) AS 'ZeroTripDistance'  
+FROM YellowTripData;
+```
+
+```sql
+-- Create the stored procedure
+CREATE PROCEDURE dbo.cuspImputeTripDistanceMean
+AS
+BEGIN
+-- Specify @AvgTripDistance variable
+DECLARE @AvgTripDistance AS numeric (18,4)
+
+-- Calculate the average trip distance
+SELECT @AvgTripDistance = AVG(TripDistance) 
+FROM YellowTripData
+-- Only include trip distances greater than 0
+WHERE TripDistance > 0
+
+-- Update the records where trip distance is 0
+UPDATE YellowTripData
+SET TripDistance =  @AvgTripDistance
+WHERE TripDistance = 0
+END;
+```
+
+```sql
+-- Create the function
+CREATE FUNCTION dbo.GetTripDistanceHotDeck()
+-- Specify return data type
+RETURNS numeric(18,4)
+AS 
+BEGIN
+RETURN
+ -- Select the first TripDistance value
+ (SELECT TOP 1 TripDistance
+ FROM YellowTripData
+    -- Sample 1000 records
+ TABLESAMPLE(1000 rows)
+    -- Only include records where TripDistance is > 0
+ WHERE TripDistance > 0)
+END;
+```
+
+## Formatting
+
+Calculate Total Fare Amount per Total Distance for each day of week. If the TripDistance is zero use the Hot Deck imputation function you created earlier in the chapter.
+
+```sql
+SELECT
+    -- Select the pickup day of week
+ DATENAME(weekday, PickupDate) as DayofWeek,
+    -- Calculate TotalAmount per TripDistance
+ CAST(AVG(TotalAmount/
+            -- Select TripDistance if it's more than 0
+   CASE WHEN TripDistance > 0 THEN TripDistance
+                 -- Use GetTripDistanceHotDeck()
+         ELSE dbo.GetTripDistanceHotDeck() END) as decimal(10,2)) as 'AvgFare'
+FROM YellowTripData
+GROUP BY DATENAME(weekday, PickupDate)
+-- Order by the PickupDate day of week
+ORDER BY
+     CASE WHEN DATENAME(weekday, PickupDate) = 'Monday' THEN 1
+          WHEN DATENAME(weekday, PickupDate) = 'Tuesday' THEN 2
+          WHEN DATENAME(weekday, PickupDate) = 'Wednesday' THEN 3
+          WHEN DATENAME(weekday, PickupDate) = 'Thursday' THEN 4
+          WHEN DATENAME(weekday, PickupDate) = 'Friday' THEN 5
+          WHEN DATENAME(weekday, PickupDate) = 'Saturday' THEN 6
+          WHEN DATENAME(weekday, PickupDate) = 'Sunday' THEN 7
+END ASC;
+```
+
+Write a query to display the TotalDistance, TotalRideTime and TotalFare for each day and NYC Borough. Display the date, distance, ride time, and fare totals for German culture.
+
+```sql
+Write a query to display the TotalDistance, TotalRideTime and TotalFare for each day and NYC Borough. Display the date, distance, ride time, and fare totals for German culture.
 ```

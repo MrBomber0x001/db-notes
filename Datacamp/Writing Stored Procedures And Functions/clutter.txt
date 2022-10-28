@@ -1,0 +1,151 @@
+I know maintenance doesn't sound as exciting as creating and executing, but if you don't take good care of your hard work who will?
+2. ALTER Function
+
+You might have already asked yourself, how can I change a function which has already been created? The ALTER keyword can be used for this. Here, we are changing the SumLocationStats() function we created previously. The input parameter name is now @EndDate instead of @BeginDate and is compared to the DropOffDate column instead of PickupDate.
+3. CREATE OR ALTER
+
+You can also use CREATE OR ALTER keywords together. This is helpful during the development process when you are making many subsequent changes. SQL Server won't let you CREATE a function that already exists, but CREATE OR ALTER will execute without issue.
+4. DROP Function
+
+There are some limitations to ALTER. If you want to change a table valued function from a Multi Statement to an Inline or vice versa, you can't use ALTER. Instead, to make this type of structural change, you need to use DROP to delete the function. After its deleted use CREATE as either an Inline or Multi statement. DROP should be used whenever you need to delete a function. Make sure to keep your work tidy, and delete functions you created but don't plan to use in the future. DROP will execute as long as your database user has permission to do so.
+5. Determinism improves performance
+
+Determinism is a characteristic of a function and is true when a function will return the same result given the same input parameters and state of the database. A function is nondeterministic if it could return a different value given the same input parameters and database state.
+6. Determinism improves performance
+
+GetRideHoursOneDay() is an example of a deterministic function while GetTomorrow() is nondeterministic. GetTomorrow(), just like GETDATE(), doesn't return the same result because it's always in relation to the current date. Sometimes functions can't be made deterministic, but we should try to make them deterministic if possible. When a function is deterministic, SQL Server can index the results which contributes to improved performance. Built-in SQL functions determinism cannot be adjusted. As you use native SQL functions you should review whether they are deterministic or not. One of the aspects of determinism is returning the same result based on the same state of the database. How can a function verify that the database state won't change in a way that would affect its result? The function's schemabinding option can be enabled.
+7. Schemabinding
+
+A schema is a collection of database objects associated with one particular database owner like dbo. UDFs can reference database objects like tables, columns, data types or other functions. If the SCHEMABINDING option is enabled within the function, SQL Server will prevent changes to the database objects that it references. For example, if someone attempted to rename the PickupDate column of the YellowTripData table, SQL would prevent this change because the GetRideHrsOneDay() function is bound to its schema. We do this by including the WITH SCHEMABINDING keywords after the RETURNS clause. If a change is needed to a database object referenced in your schemabound function, you can temporarily remove the SCHEMABINDING, make the database object change, and then change the UDF to reflect the database object change. Don't forget to turn back on SCHEMABINDING to protect against future changes.
+
+## Maintinag user defined functions
+1. Stored procedures
+
+It's time to learn about stored procedures, another great tool to add to your SQL skills.
+2. What is a stored procedure?
+
+What is a stored procedure, or SP? It's a routine that can accept input parameters, perform an action, and return success status and output parameters. Some of these characteristics should sound familiar; maybe like the user defined functions we discussed earlier? They are similar, but not the same. Within stored procedures you can EXECUTE INSERT, UPDATE, SELECT, DELETE and call other stored procedures as well. These statements can change data outside of the SP scope.
+3. Why use stored procedures?
+
+Why should we use stored procedures? They can reduce execution time, network traffic, and allow for modular programming like user defined functions, but they can also improve database security. Stored procedures can be written and utilized to help prevent SQL injection attacks which are a nefarious technique where SQL statements are injected into a database.
+4. What's the difference?
+
+Let's review the differences between UDFs and Stored Procedures. The only characteristics they actually share are accepting input parameters and performing an action. The rest are distinct differences. SPs don't have to return a value and technically can't return a table valued result. They cannot be executed in a simple SELECT statement but can return output parameters, return status, and result sets. You can execute functions and SPs from within an SP, as well as INSERT, UPDATE and DELETE statements. You can also do effective error handling in stored procedures.
+5. CREATE PROCEDURE with OUTPUT parameter
+
+Let's look at the first four lines of SQL Server syntax to create a stored procedure. Here we are using the logic from the GetRideHrsOneDay() function discussed previously. We use the CREATE PROCEDURE keyword followed by the schema and stored procedure name. Stored procedure names must be unique across the schema, including UDFs. You can't have the same name as a user defined function so we added a cusp prefix here. Following the SP name is the input parameter @DateParm and its date data type. An output parameter, @RideHrsOut, is defined as a numeric data type and the OUTPUT keyword indicates it should be returned as output. Parameters still need to be named with the at symbol as the first character but are not required to be enclosed by parenthesis, like in UDFs.
+6. CREATE PROCEDURE with OUTPUT parameter
+
+The SET NOCOUNT ON statement on the 4th line prevents SQL from returning the number of rows affected by the stored procedure to the caller. This is optional, and some consider it best practice, but it can cause issues for the calling application if it's expecting this data to be returned. The rest of the statement is the same as the GetRideHrsOneDay() UDF created previously, except we are assigning the result of the SELECT statement to the output parameter @RideHrsOut. The RETURN keyword is optional and instructs the SP to return the output parameter to the calling application immediately.
+7. Output parameters vs. return values
+
+What are output parameters and return values? Output parameters are defined similar to input parameters, but with the OUTPUT keyword. They can be any data type except table valued. You can also declare multiple output parameters per stored procedure. Return values in SPs are generally used to indicate success or failure to the calling application. SPs can only return integer data types and zero indicates success. Non-zero values indicate that the SP experienced some type of error during execution. 
+
+##Oh crud
+1. Oh CRUD!
+
+Let's talk about CRUD, which stands for Create, Read, Update and Delete.
+2. Why stored procedures for CRUD?
+
+Why should we use stored procedures to Create, Read, Update, and Delete data? Applications can use N-tier architecture, which utilizes various logical layers separating presentation functionality, business logic, data access functionality, and the data source. Stored procedures exist in the data source, and the data access layer only needs to execute them, instead of executing more complex SQL queries. This decouples the SQL code from the data access layer.
+3. Why stored procedures for CRUD?
+
+Stored procedures can also be used to improve security and prevent things like SQL injection attacks. When stored procedures are used properly, instead of executing dynamic SQL, they can help keep the database secure.
+4. Why stored procedures for CRUD?
+
+The SQL Server query optimizer creates an execution plan when a stored procedure is first executed. The plan is an attempt to calculate the most efficient way to implement the query submitted. The database engine follows the execution plan that exists. Since it takes a lot of resources for the query optimizer to create the execution plan, they are cached for future use. This reuse of the execution plan allows stored procedures to run faster compared to ad hoc SQL queries which need to be analyzed by the query optimizer each time they are executed.
+5. C for CREATE
+
+The code shown will create a stored procedure that will be used to create records in the TripSummary table. You should avoid the sp prefix when creating your own stored procedures, as it can identify a system stored procedure. An alternative is the cusp prefix, but you should be consistent and follow your organization's naming convention. Here we include the table name followed by the action to be taken on the table in the stored procedure name. The TripSummary table only has two columns so we need two input parameters which will be used as the VALUES in the INSERT statement. We also select the record that was just inserted, which will be returned when the stored procedure is executed.
+6. R for READ
+
+The stored procedure created here will accept a TripDate input parameter and return the TripSummary records with a matching date value. Notice the consistency in naming convention. By including the table name in the stored procedure name, all stored procedures associated with the TripSummary table will be grouped together. Including the CRUD suffix makes it clear which stored procedure should be used for each database action.
+7. U for UPDATE
+
+This stored procedure will be used to update existing records in the TripSummary table. The input parameters correspond to the column values that could be changed, TripDate and TripHours. It should also include the column values used to identify the records to be changed. Then we use the UPDATE statement and SET the Date and TripHours columns to the input parameter values for the record with the matching TripDate value.
+8. D for DELETE
+
+We can't have CRUD without Delete! This stored procedure will accept a TripDate input parameter and delete the matching record from the TripSummary table. It will also return the affected row count as an output parameter by using the @@ROWCOUNT system variable. This keyword is helpful for understanding the impact of your stored procedures and should begin with the two at signs. Here @@ROWCOUNT captures the number of rows affected by the previous statement and assigns it to the @RowCountOut output parameter. The @@ROWCOUNT system variable does get reset and you can't control when so you should store the value in a local variable to evaluate. 
+
+## Oh exec
+1. Let's EXEC!
+
+Now that you have created several stored procedures, let's see how we can put them to use.
+2. Ways to EXECute
+
+There are several ways to execute stored procedures. Sometimes there is no output parameter and you don't need to store the return value. Other times you might need to store and evaluate the return value. You need to anticipate if a stored procedure is designed to return an output parameter. If an output parameter is defined SQL Server will return an error if you don't assign an output parameter when executing. What if you need to store both the output parameter and return value? Even though stored procedures don't return table valued results sets, like functions can, you can still store a result set that is returned. Let's take a look at examples for each of the scenarios listed.
+3. EXEC in action
+
+The first code section shows how to execute a stored procedure with the EXEC keyword followed by the SP name. If the stored procedure has input parameters, like the UPDATE SP shown, they need to be assigned a value. If a stored procedure returns an output parameter a local variable should be declared to store the value. The variable data type should match what the stored procedure will return. The EXEC keyword is followed by the stored procedure name. The @DateParm input parameter value is assigned and then the Output parameter is assigned to the local @RideHrs variable. The output parameter assignment must be followed by the OUTPUT keyword. Since we are declaring a local variable named @RideHrs to store the output parameter value, we can select it and view its result which is 77,733 in this case.
+4. EXEC in action
+
+Let's execute TripSummaryUpdate again, but this time we will store the return value. Remember the return value indicates if the stored procedure encountered an error or not. First, we declare a local integer variable named @ReturnValue, which is set to the result of the TripSummaryUpdate stored procedure. A non-zero value indicates an error was encountered, so we can assume our update was successful when we select the ReturnValue variable and see its value is zero. What if we need to store both the return value and the output parameter? First, we declare variables to store each. As before, the return value gets set to the result of the SP. The @RowCount parameter value gets assigned as the output parameter with the OUTPUT keyword. When the ReturnValue and RowCount are selected, we see the SP finished without error and one row was affected by the delete action.
+5. EXEC & store result set
+
+You previously learned stored procedures don't behave like table valued functions. They don't return result sets in the same way and you can't execute them by SELECTing from them. However, you can return a result set from a stored procedure and store it. Here we declare a table variable named @TripSummaryResultSet and define the columns. The column data types should align with the data types of the stored procedure's result set. Then the INSERT INTO keyword is used, followed by the EXEC keyword, stored procedure name, and input parameter. This is how you store the result set returned from the stored procedure. Finally you can see the table variable contents when we select from it. 
+
+## TRY CATCH
+Let's learn how to include error handling in stored procedures.
+2. To handle errors or not
+
+An entire Datacamp course could be devoted to effective error handling in SQL Server. Here, we will cover part of this topic to get you started with incorporating error handling in stored procedures. What is error handling? It happens when errors are anticipated, detected, and resolved in a way that controls the normal flow of execution. To do this, error handling needs to be integrated into the query design from the beginning. What happens when errors are NOT effectively handled? You have probably experienced this. An application can shut down or get stuck and can't continue to execute. A generic error message might be provided that doesn't include helpful context. This can be frustrating for users and developers so it's important to anticipate errors regardless of how well your queries are written.
+3. Let's TRY
+
+Let's intentionally create an error to illustrate how error handling can be incorporated. Here is our TripSummaryCreate stored procedure, but the data type of the @TripDate parameter is changed to a nvarchar instead of a date. When we pass an invalid date value to the stored procedure it will be accepted into the parameter, but an error will occur when we attempt to insert a non-date value into the TripSummary table. The data type of the table column is a date and SQL Server can't convert a string to a date. A third output parameter has also been added, named @ErrorMsg. It's an optional parameter as indicated by setting the initial value to null. The INSERT INTO statement is enclosed within a BEGIN TRY and END TRY block, where the code that could cause an error should be located.
+4. Time to CATCH
+
+The BEGIN TRY and END TRY block should be followed by the BEGIN CATCH and END CATCH block. This is where you can capture details about the error that occurs within the BEGIN and END TRY. Here we capture the Error number, severity, and message. These three error functions are concatenated together into a string with some additional text labels and assigned to the @ErrorMsg output parameter. If you didn't want to return this in an output parameter, it could also be inserted into an error message table.
+5. Show me the ERROR...
+
+What happens now when we pass 1/32/2018 to the TripSummaryCreate stored procedure? An error occurs when SQL attempts to convert 1/32/2018 to a valid date when inserting into the TripSummary table. The @ErrorMsgOut variable we declared now contains the value of the @ErrorMsg output parameter. It's important to capture and store details about errors when they occur because those details can't be accessed after they happen.
+6. THROW vs RAISERROR
+
+As you educate yourself further on SQL Server error handling you may want to generate your own errors and not just handle those that SQL Server generates. To switch control from a Try block to a CATCH block, you can use the THROW keyword. This is helpful when you need to initiate an error that could cause a problem in your query. RAISERROR was the main error handling tool in SQL Server until THROW was introduced in 2012. THROW is easier to use and statements that follow THROW will not be executed if an error occurs. RAISERROR generates a new error and can't access the details about the original error. Statements that follow RAISERROR can still be executed. It's recommended to utilize THROW instead of RAISERROR, but it's helpful to know what predates it and their distinctions. 
+
+## CASE STUDY
+1. Case study EDA & imputation
+
+The best way to solidify knowledge is to apply it to a real world business problem. Let's use your new SQL skills in EDA, functions, and stored procedures to solve a business problem with the TaxiRide dataset.
+2. Taxi ride business problem
+
+An overseas private equity firm is looking to invest in US Transportation. The sharp decline in the New York City taxi medallion price may represent a buying opportunity. The firm wants to understand the average fare per trip distance, ride count, and total ride time for each weekday and NYC borough. They also want to dig deeper and identify the pickup locations within the boroughs that should be scheduled for each driver shift.
+3. Essential EDA
+
+We always begin with EDA, it's essential. You need to expect data anomalies and be in a position to explain how they affect your query results. Your EDA conclusions could greatly affect how business decisions are implemented using your queries. When working with distributed transactional datasets it's helpful to identify data collection errors. If a distributed device is not calibrated properly, the data it collects could contain errors. Here is a query to identify transactions in the BikeShare dataset where the StartDate or EndDate is in the future, or if the StartDate happens before the EndDate. This could help identify a potential distributed equipment or sensor issue.
+4. Data imputation
+
+As you start to calculate average fare per TripDistance you encounter a divide by zero error. You then discover there are hundreds of records where the Trip Distance is incorrectly set to zero. You have to decide which data imputation method you will use to resolve this data integrity issue. There are many ways to resolve the missing data problem, but we will just cover 3 in this lesson; Mean, Hot Deck, and Omission.
+5. Mean imputation
+
+Mean imputation is a technique that involves replacing any corrupt value with the column's mean value. This is beneficial because it doesn't change the mean value. However, it also increases correlations involving the column that is imputed. Here is a stored procedure that will update the records which have an incorrect duration of zero and set them to the value of the mean. You could also introduce more complexity and calculate a value that evaluates start and end time.
+6. Hot Deck imputation
+
+Hot Deck imputation is a technique where a missing value is set to a randomly selected value from the dataset. The TABLESAMPLE clause can be used for this. The SQL code here creates a function that will return a randomly selected Duration value using the TABLESAMPLE clause of the FROM clause. The function is selecting the first record from the TABLESAMPLE of 1,000 random records where the Duration is more than 0. In the second code block, we implement Hot Deck imputation by calling the function each time we encounter a Duration value of zero via CASE statement. In the previous example, we updated the missing values directly in the table with a stored procedure. In this example, we are getting a hot deck value from the function each time a zero is encountered, but not affecting the underlying data.
+7. Impute via Omission
+
+Sometimes the best way to resolve corrupt data is simply to exclude those records from your analysis. Here we calculate the average duration per DayofWeek excluding records where Duration is zero. When selecting an imputation technique, you should consider dataset size, the analysis goals, data distribution, as well as the corrupt data's relationship to other columns. All imputation techniques inherently inject bias, and you need to be comfortable with the effect of that bias. 
+
+
+## CASE STUDY UDF
+It's time to identify what user defined functions we need to create to solve this business problem.
+2. Taxi ride business problem
+
+Let's revisit the case study. An EU private equity firm wants to understand the average fare per distance, ride count, and total ride time for each day of the week in each NYC borough. Do you think the overseas firm wants to see the distance in miles as it's stored in the dataset? You're right, they don't. How about the taxi fare data? They want to see these amounts in their home currency. Since you only want to display this data in a different format, you should write user defined functions. You need to create two functions: one to convert miles to kilometers, and another to convert currency based on the exchange rate parameter passed.
+3. Taxi ride business problem
+
+Let's review the 3rd item in the business problem. Once we discover the borough with the most favorable metrics, the firm wants to understand those metrics at the Pickup location level within the borough. They also want to apply a driver shift grouping to address the temporal aspect of this data. You might be wondering how a shift should be defined? Throughout various industries shift definitions tend to change frequently and so we will apply a modular programming technique to isolate this logic in a user defined function. This will ensure the shift definitions can evolve with the ever-changing business needs, without affecting the final stored procedures.
+4. Conversion UDFs
+
+So what should our conversion functions look like? Here we have a user defined function that accepts an input parameter named miles, multiplies it by 1,609.34 and returns this distance in meters. Don't forget user defined functions must have the RETURNS data type definition and the RETURN keyword. The body of the function is also contained within a BEGIN END block. Next, we have a user defined function that accepts two parameters; currency and the exchange rate to be applied to the currency amount.
+5. Time to test
+
+How do we know the functions are working as intended? We need to test to verify. This is an essential step in developing user defined functions, since executing them in various scenarios ensures they are robust. Here we are selecting TripDistance and passing it to the ConvertMileToMeter() function. We are also selecting FareAmount and passing it to the ConvertCurrency() function. Look closely at the results. Do you see a problem? How can all the MeterDistance values be whole numbers? We have the same problem with our Fare values. Oh no! Our functions are rounding to the nearest whole number. Oops! Let's fix that.
+6. Iterate
+
+Because we didn't specify the decimal places to be associated with the numeric data type, SQL used a default of zero. Here we use ALTER FUNCTION to set the precision to 18 and decimal places to 2 for our numeric data type parameters in each function. This also needs to be updated in our return value definitions.
+7. What about Shifts?
+
+Here is a function named GetShift() that accepts an hour input parameter and returns the shift integer associated with that hour. Shift logic can often get complex and this function could be modified to contain additional business rules.
+8. Test Shifts
+
+Let's test the shift function. This query selects the hour value of the PickupDate and the result of the GetShift() function when that hour value is passed. Review the results to ensure the function is correct. 
