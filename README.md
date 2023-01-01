@@ -1,4 +1,5 @@
-# Introduction
+<h1 align="center">Advanced Database Notes</h1>
+
 ![Untitled Design](https://user-images.githubusercontent.com/42917814/209810128-4d37e43b-a33d-4394-928c-38879c2f3b22.png)
 
 This repo contains notes I've taken during studying databases.
