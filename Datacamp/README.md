@@ -35,7 +35,7 @@ You can keep tracking yoru progress here.
 
 #### Other Courses
 
-[ ] [Introduction to SQL](https://app.datacamp.com/learn/courses/introduction-to-sql)
+- [ ] [Introduction to SQL](https://app.datacamp.com/learn/courses/introduction-to-sql)
 
 ## SQL Server
 
