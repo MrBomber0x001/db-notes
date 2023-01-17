@@ -1,4 +1,4 @@
-<h1 align="center">Advanced Database Notes</h1>
+<h1 align="center">Advanced Database Notes [🏗 updated periodically]</h1>
 
 ![Untitled Design](https://user-images.githubusercontent.com/42917814/209810128-4d37e43b-a33d-4394-928c-38879c2f3b22.png)
 
