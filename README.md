@@ -2,9 +2,9 @@
 
 ![Untitled Design](https://user-images.githubusercontent.com/42917814/209810128-4d37e43b-a33d-4394-928c-38879c2f3b22.png)
 
-# Database Study Repository
+# Hola :D
 
-Hola! This repository comprehensively collects my notes and exercises from various database learning resources. Here's what you'll find inside:
+This repository was created from the very beginning to serve as a single source of truth for studying databases from both science and technology POV. It should aim to prepare individuals for SQL interviews and provide valuable insights into performance optimization tips.
 
 ## Contents
 
@@ -27,7 +27,6 @@ Additionally, this repository now includes:
 - **Redis Notes**: Information and best practices for using Redis, the in-memory data structure store.
 - **MongoDB Notes**: Insights and practical examples for working with MongoDB, the document-oriented database.
 
-Feel free to explore and use these resources to enhance your understanding of databases!
 ## Database Learning Resources
 
 ### Courses and Training
