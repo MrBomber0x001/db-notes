@@ -2,24 +2,32 @@
 
 ![Untitled Design](https://user-images.githubusercontent.com/42917814/209810128-4d37e43b-a33d-4394-928c-38879c2f3b22.png)
 
-This repo contains notes I've taken during studying databases.
+# Database Study Repository
 
-The repo contains the following:
+Hola! This repository comprehensively collects my notes and exercises from various database learning resources. Here's what you'll find inside:
 
-1. Datacamp Notes and Exercises I've done during my learning journey with them
+## Contents
 
-2. Hackerrank solutions I've make.
+- **DataCamp Notes and Exercises**: Detailed insights and hands-on practice from my DataCamp courses.
+- **HackerRank Solutions**: A compilation of my solutions to HackerRank database challenges.
+- **Carnegie Mellon University Database Course Notes**:
+  - **Introduction to Database Concepts, Fall 2018**: An overview of fundamental database concepts.
+  - **Advanced Databases, Fall 2018**: In-depth exploration of advanced database topics.
+- **Book Notes**: Summaries and key takeaways from the following books:
+  - **Concise Guide to Databases**: A compact yet thorough guide to database fundamentals.
+  - **T-SQL Fundamentals**: Essential knowledge for working with Transact-SQL.
+  - **Database System Concepts**: A comprehensive look at database systems and their underlying concepts.
+  - **Architecture of Database Systems**: Insights into the design and architecture of database systems.
+  - **Internals of Databases**: A deep dive into the inner workings of database management systems.
 
-3. Notes from Carnige mellon Database courses:
-    - [ ] Introduction to Database Concepts, Fall 2018
-    - [ ] Advanced Databases Fall 2018
-4. Notes from the Books I've read:
-    - [ ] Concise Guide to Databases
-    - [ ] T-SQL fundementals
-    - [ ] Database System Concepts
-    - [ ] Architecture of Database Systems
-    - [ ] Internals of Databases.
+## Additional Focus
 
+Additionally, this repository now includes:
+
+- **Redis Notes**: Information and best practices for using Redis, the in-memory data structure store.
+- **MongoDB Notes**: Insights and practical examples for working with MongoDB, the document-oriented database.
+
+Feel free to explore and use these resources to enhance your understanding of databases!
 ## Database Learning Resources
 
 ### Courses and Training
