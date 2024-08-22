@@ -20,25 +20,29 @@ The repo contains the following:
     - [ ] Architecture of Database Systems
     - [ ] Internals of Databases.
 
+## Database Learning Resources
 
-## Resources
-these resources are divided into main sections:
-1. courses [videos]
-2. books and articles
-
-trainings
--------
+### Courses and Training
+- [MySQL course covering indexes](https://planetscale.com/learn/courses/mysql-for-developers)
+- [Database Engines](https://www.udemy.com/course/database-engines-crash-course/?couponCode=ST16MT70224)
+- [Relational Internals](https://www.youtube.com/playlist?list=PLE8kQVoC67PzGwMMsSk3C8MvfAqcYjusF)
 - [Brentozar training](https://training.brentozar.com/courses) for advanced topics.
-- High Performance MySQL: Optimization, Backups, and Replication [Book].
-- [Fundmentals of Database Engineering](https://www.udemy.com/course/database-engines-crash-course/)
-- <a href="https://www.red-gate.com/blog/database-development">Red Gate Blog</a>
-- <a href="https://www.youtube.com/c/ScalingPostgres/videos">Postgres Scaling - [Youtbube] </a>
+- [Fundamentals of Database Engineering](https://www.udemy.com/course/database-engines-crash-course/)
+- [Postgres Scaling - [YouTube]](https://www.youtube.com/c/ScalingPostgres/videos)
 
-Books
--------
-- [ ] Database Internals: How Distributed Database Systems works!
-- [ ] Concide Guide to Database
-- [ ] Database Systems concepts
+### Books and Articles
+- [MySQL High Performance (Book)](https://www.oreilly.com/library/view/high-performance-mysql/9781492080503/)
+- [Database Internals (Book)](https://www.oreilly.com/library/view/database-internals/9781492040330/)
+- [Redis Explained](https://architecturenotes.co/p/redis)
+- [Database Sharding Explained](https://architecturenotes.co/p/database-sharding-explained)
+- [PostgreSQL internals](http://www.interdb.jp/pg/pgsql01.html)
+- [PostgreSQL vacuum cleaner](https://www.red-gate.com/simple-talk/databases/postgresql/uncovering-the-mysteries-of-postgresql-auto-vacuum/)
+- [Red Gate Blog](https://www.red-gate.com/blog/database-development)
+
+### Other Important Resources
+- [Database Internals: How Distributed Database Systems Work!](https://www.oreilly.com/library/view/database-internals/9781492040330/)
+- [Concise Guide to Database](https://www.oreilly.com/library/view/concise-guide-to/9780128043991/)
+- [Database Systems Concepts](https://www.db-book.com/)
 
 
 ## My Articles:
