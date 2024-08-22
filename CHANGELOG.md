@@ -1,8 +1,5 @@
 # Changelog
 
-
-# Changelog
-
 All notable changes to this repo will be documented in this file.
 
 ## 2024-08-23
