@@ -12,3 +12,4 @@ All notable changes to this repo will be documented in this file.
 - testing the monitoring script
 
 ## adding another one for testing
+- testing the twitter monitoring tool
