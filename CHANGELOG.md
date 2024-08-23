@@ -20,4 +20,5 @@ All notable changes to this repo will be documented in this file.
 - Another line added in CHANGELOG DDf
 - Another line added in CHANGELOG DDfdfdf
 - Another line added in CHANGELOG DDfdfdf
+- This line is added in CHANGELOG file in Github repo 
 
