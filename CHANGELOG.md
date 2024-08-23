@@ -8,19 +8,6 @@ All notable changes to this repo will be documented in this file.
 - reorganized repo - moving leetcode and hackerrank to a problem-solving dir.
 - started working on 'Hussein nasser' course which estimated to be finished next week
 
-## Added for testing only
-- testing the monitoring script
-
-## adding another one for testing
-- testing the twitter monitoring tool
-- testing........
-- added another line
-- This line is added in CHANGELOG file in Github repo 
-- Another line added in CHANGELOG
-- Another line added in CHANGELOG DDf
-- Another line added in CHANGELOG DDfdfdf
-- Another line added in CHANGELOG DDfdfdf
-- This line is added in CHANGELOG file in Github repo 
-
-- This line is added in CHANGELOG file in Github repo 
-
+## 2024-08-23 08:02:28
+- reorganized repo - moving leetcode and hackerrank to a problem-solving dir.
+- started working on 'Hussein nasser' course which estimated to be finished next week
