@@ -15,3 +15,4 @@ All notable changes to this repo will be documented in this file.
 - testing the twitter monitoring tool
 - testing........
 - added another line
+- This line is added in CHANGELOG file in Github repo 
