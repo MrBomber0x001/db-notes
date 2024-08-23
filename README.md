@@ -21,6 +21,7 @@ This repository was created from the very beginning to serve as a single source 
   - **Database System Concepts**: A comprehensive look at database systems and their underlying concepts.
   - **Architecture of Database Systems**: Insights into the design and architecture of database systems.
   - **Internals of Databases**: A deep dive into the inner workings of database management systems.
+- **ITI DB Notes**: Detailed noted related to 10 Days Intensive ITI Database course
 
 ## Additional Focus
 
