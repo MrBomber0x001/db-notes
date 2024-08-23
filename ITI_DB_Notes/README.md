@@ -6,19 +6,19 @@ Welcome to my SQL repository! This repository aims to provide comprehensive note
 
 ## Contents
 
-### [Day1](./Notes/DB%20-%20Day1.md)
+### [Day1](./DB%20-%20Day1.md)
 1. Database Life cycle
 2. ERD
 3. Types of entities
 4. Types of atrributes
 5. Relation
 6. Types of Keys
-### [Day2](./Notes/DB%20-%20Day2.md)
+### [Day2](./DB%20-%20Day2.md)
 1. Categories of Microsoft Transact-SQL
 2. DDL - Create queries
 3. DML Queries
 4. DQL
-### [Day3](./Notes/DB%20-%20Day3.md)
+### [Day3](./DB%20-%20Day3.md)
 1. Type Of Joins
    - Cross Join
    - Inner Join
@@ -34,7 +34,7 @@ Welcome to my SQL repository! This repository aims to provide comprehensive note
 7. Database Integrity
 8. Constraints
 
-### [Day4](./Notes/DB%20-%20Day4.md)
+### [Day4](./DB%20-%20Day4.md)
 1. Aggregate Functions
 2. Group By
 3. Having
@@ -47,7 +47,7 @@ Welcome to my SQL repository! This repository aims to provide comprehensive note
 10. Identity
 11. Built In Functions
 
-### [Day5](Notes/DB%20-%20Day5.md)
+### [Day5](./DB%20-%20Day5.md)
 1. Schema
 2. Top
 3. NEWID
@@ -60,7 +60,7 @@ Welcome to my SQL repository! This repository aims to provide comprehensive note
    - Partition By
 6. Merge  
 
-### [Day6](./Notes/DB%20-%20Day6.md)
+### [Day6](./DB%20-%20Day6.md)
 1. Variables
    - Local Variables
    - Global Variables
@@ -76,13 +76,13 @@ Welcome to my SQL repository! This repository aims to provide comprehensive note
    - Inline Functions
    - Mulit-Statement Functions
 
-### [Day7](./Notes/DB%20-%20Day7.md)
+### [Day7](./DB%20-%20Day7.md)
 1. Index
 2. Cursor
 3. View
 4. Pivot And Grouping
 
-### [Day8](./Notes/DB%20-%20Day6.md)
+### [Day8](./DB%20-%20Day6.md)
 1. Stored Procedure
 2. Triggers
 
