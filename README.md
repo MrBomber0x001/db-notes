@@ -27,15 +27,15 @@ This repository was created from the very beginning to serve as a single source 
 ## Sections
 ## Sections
 
-- [Articles](articles/README.md)
+- [Articles](Articles/README.md)
 - [Carnegie Mellon University Notes](cmu/README.md)
-- [DataCamp Notes](datacamp/README.md)
-- [ITI DB Notes](iti_db_notes/README.md)
-- [Internals of Databases](internals/README.md)
-- [MongoDB](mongodb/README.md)
-- [Problem Solving](problem_solving/README.md)
+- [DataCamp Notes](Datacamp/README.md)
+- [ITI DB Notes](ITI_DB_Notes/README.md)
+- [Internals of Databases](Internals/README.md)
+- [MongoDB](MongoDB/README.md)
+- [Problem Solving](Problem_Solving/README.md)
 - [Redis](redis/README.md)
-- [Technical Interviews](technical_interviews/Technical_Interviews.md)
+- [Technical Interviews](Technical_Interviews/Technical_Interviews.md)
 ## Additional Focus
 
 Additionally, this repository now includes:
