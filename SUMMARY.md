@@ -3,7 +3,7 @@
 * [README](README.md)
 * [Changelog](CHANGELOG.md)
 * [SQL Technical Interviews](Technical\_Interviews.md)
-* [Intro](Articles/README.md)
+* [Articles](Articles/README.md)
 * [CMU](CMU/README.md)
   * [Advanced](CMU/Advanced/README.md)
   * [Introduction](CMU/Introduction/README.md)
