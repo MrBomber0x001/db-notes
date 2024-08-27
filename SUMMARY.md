@@ -41,7 +41,7 @@
     * [intro](<Datacamp/Intro To Relational DB/intro.md>)
   * [Intro to SQL](<Datacamp/Intro to SQL/README.md>)
   * [Intro](<Datacamp/Intro to SQL\_Server/README.md>)
-  * [Topics covered:](<Datacamp/NoSQL Concepts/README.md>)
+  * [NoSQL Covered](<Datacamp/NoSQL Concepts/README.md>)
   * [README](<Datacamp/Reporting in SQL/README.md>)
   * [Time Series Analysis](<Datacamp/Time Series Analysis/README.md>)
   * [How to Handle T-SQL Errors Properly \[Extensive guide\]](<Datacamp/Transcation And Error Handling/README.md>)
