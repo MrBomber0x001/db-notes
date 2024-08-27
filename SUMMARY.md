@@ -36,7 +36,7 @@
   * [Functions For Manipulating Data](<Datacamp/Functions For Manipulating Data/README.md>)
   * [README](<Datacamp/Hierarchical and Recursive Queries in SQL Server/README.md>)
   * [Improving Query Performance](<Datacamp/Improving Query Performance/README.md>)
-  * [Contents](<Datacamp/Intermediate SQL/README.md>)
+  * [Intermediate SQL](<Datacamp/Intermediate SQL/README.md>)
   * [Intro To Relational DB](datacamp/intro-to-relational-db/README.md)
     * [intro](<Datacamp/Intro To Relational DB/intro.md>)
   * [Intro to SQL](<Datacamp/Intro to SQL/README.md>)
