@@ -30,7 +30,7 @@
   * [README](<Datacamp/Analyzing Buisness Data in SQL/README.md>)
   * [Building and Optimizing Triggers](<Datacamp/Building And Optimizing Triggers/README.md>)
     * [Trigger Management and Optimization](<Datacamp/Building And Optimizing Triggers/another.md>)
-  * [README](<Datacamp/Cleaning Data in SQL Server Databases/README.md>)
+  * [Cleaning Data In SQL Server](<Datacamp/Cleaning Data in SQL Server Databases/README.md>)
   * [Database Design](<Datacamp/Database Design/README.md>)
   * [README](<Datacamp/Exploratory Data Analysis in SQL/README.md>)
   * [Functions For Manipulating Data](<Datacamp/Functions For Manipulating Data/README.md>)
