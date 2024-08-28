@@ -1,4 +1,6 @@
-# B-tree Basics (1)
+# B-tree Basics
+
+## Introduction
 
 B-trees are fundamental data structures in database systems, playing a crucial role in efficient data storage and retrieval. They are self-balancing tree structures that maintain sorted data and allow for logarithmic time complexity in search, insertion, and deletion operations.
 
