@@ -54,7 +54,7 @@
     * [README](<Datacamp/PostgreSQL/Improving Query Performance In PostgreSQL/README.md>)
     * [PostgreSQL Summary Stats and Window Functions](<Datacamp/PostgreSQL/PostgreSQL Summary Stats and Window Functions/README.md>)
     * [Transactions and Error Handling in PostgreSQL](<Datacamp/PostgreSQL/Transactions and Error Handling in PostgreSQL/README.md>)
-* [SQL Querying and Database Management Concepts](ITI\_DB\_Notes/README.md)
+* [ITI Database Notes (Rami)](ITI\_DB\_Notes/README.md)
   * [DB - Day1](<ITI\_DB\_Notes/DB - Day1.md>)
   * [DB - Day2](<ITI\_DB\_Notes/DB - Day2.md>)
   * [DB - Day3](<ITI\_DB\_Notes/DB - Day3.md>)
