@@ -1,6 +1,5 @@
 # Database Internals book
 
-<figure><img src="https://www.google.com/url?sa=i&#x26;url=https%3A%2F%2Ftoinfshop.com%2Fproducts%2Ftb-zbn-sl%2Fdata-base%2F3520%2F&#x26;psig=AOvVaw1_w1IrfUwgMjK-NT6RiWzW&#x26;ust=1724889849335000&#x26;source=images&#x26;cd=vfe&#x26;opi=89978449&#x26;ved=0CBQQjRxqFwoTCKDCm8ixlogDFQAAAAAdAAAAABAJ" alt=""><figcaption></figcaption></figure>
 
 Welcome to the "Database Internals Deep Dive" – your comprehensive guide through the intricate world of database systems. This book is designed to unravel the complexities of database internals, thoroughly exploring how databases function at their core. Whether you're a seasoned database administrator, a backend developer, or a curious student, this resource aims to enhance your understanding and mastery of database technologies.
 
