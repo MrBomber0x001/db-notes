@@ -75,5 +75,6 @@ I've written bunch of articles while I was taking Datacamp Career Path "SQL Serv
 - <a href="https://meska54.hashnode.dev/how-to-properly-optimize-triggers-in-t-sql-part-3">Optimizing Trigger for better execution and monitoring</a>
 - <a href="https://meska54.hashnode.dev/how-to-handle-t-sql-errors-efficiently">Definitive Guide to handle your SQL Errors </a>
 
-#### note
-This repo is under construction, so check it regularly as I am updating it on regular basis.
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=MrBomber0x001/db-notes&type=Date)](https://star-history.com/#MrBomber0x001/db-notes&Date)
