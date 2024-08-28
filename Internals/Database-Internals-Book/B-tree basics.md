@@ -1,1 +1,1 @@
-# 1. B-tree Basics
+# 1.B-tree Basics

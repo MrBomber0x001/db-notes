@@ -1,1 +1,1 @@
-# 6. Log Structured Storage
+# 6.Log Structured Storage
