@@ -1,4 +1,4 @@
-# File Formats
+# 2. File Formats
 
 ## Introduction
 

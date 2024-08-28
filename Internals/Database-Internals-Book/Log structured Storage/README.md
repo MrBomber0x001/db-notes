@@ -1,4 +1,4 @@
-# Log Structured Storage
+# 6. Log Structured Storage
 
 ## Introduction
 Log-structured storage is a data organization and storage management approach that has gained significant traction in modern database systems. This method is designed to optimize write operations by treating the storage system as an append-only log, where new data is continuously added to the end of the log rather than updating data in place.

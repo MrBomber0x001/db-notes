@@ -1,4 +1,4 @@
-# B-Tree Implementation
+# 3. B-Tree Implementation
 
 ## Introduction
 Implementing B-trees is a crucial aspect of database system design, as these data structures form the backbone of efficient data storage and retrieval mechanisms. This chapter delves into the practical aspects of B-tree implementation, building upon the foundational concepts introduced in the B-tree Basics section.
