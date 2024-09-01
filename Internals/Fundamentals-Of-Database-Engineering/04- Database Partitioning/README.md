@@ -1,4 +1,4 @@
-# Partioning
+# 04- Database Partitioning
 Partitioning is a database design technique used to divide a large database into smaller, more manageable pieces. This can improve performance, manageability, and availability by allowing operations to be performed on smaller subsets of data. Partitioning can be done in various ways, such as by range, list, or hash, depending on the specific requirements and characteristics of the data.
 
 ## table of content
@@ -214,7 +214,6 @@ While sharding can significantly improve scalability and performance, it also ad
 
 ## notes
 > everything you should partition against should be not null
-
 ```sh
 docker run --name pgmain -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
 

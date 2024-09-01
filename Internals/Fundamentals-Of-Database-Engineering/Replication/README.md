@@ -1,3 +1,0 @@
-# Replication
-# R
-# Replication

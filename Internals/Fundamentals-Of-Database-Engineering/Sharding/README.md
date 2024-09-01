@@ -1,2 +1,0 @@
-# Partioning
-# Sharding
